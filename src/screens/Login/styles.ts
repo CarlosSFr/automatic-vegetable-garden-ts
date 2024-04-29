@@ -2,18 +2,24 @@ import styled from "styled-components/native";
 
 export const Container = styled.View`
     flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30px;
 `
 
 export const ImageContainer = styled.ImageBackground`
     flex: 1;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
 `
 
 export const Title = styled.Text`
-    flex: 1;
-    color: white;
-    font-size: 32px;
+    color: ${props => props.theme.colors.white};
+    font-size: 64px;
+    font-weight: bold;
+    width: 100%;
+`
+
+export const Subtitle = styled.Text`
+    color: ${props => props.theme.colors.white};
+    font-size: 42px;
+    width: 100%;
 `

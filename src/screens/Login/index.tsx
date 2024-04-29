@@ -1,14 +1,17 @@
-import { Container, ImageContainer, Title } from "./styles";
+import { Container, ImageContainer, Subtitle, Title } from "./styles";
 import imgBg from "./../../assets/bg-img.png"
 
 export function Login(){
     return(
-        <Container>
-            <ImageContainer source={require("./../../assets/bg-img.png")}>
+        <ImageContainer source={require("./../../assets/bg-img.png")}>
+            <Container>
                 <Title>
-                    Shrek
+                    Sua horta facilmente
                 </Title>
-            </ImageContainer>
-        </Container>
+                <Subtitle>
+                    em qualquer lugar
+                </Subtitle>
+            </Container>
+        </ImageContainer>
     )
 }

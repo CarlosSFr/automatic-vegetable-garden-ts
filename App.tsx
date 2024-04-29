@@ -1,8 +1,12 @@
+import { ThemeProvider } from 'styled-components';
 import { Login } from './src/screens/Login';
+import theme from "./src/theme"
 
 export default function App() {
   return (
-    <Login />
+    <ThemeProvider theme={theme} >
+      <Login />
+    </ThemeProvider>
   );
 }
 
