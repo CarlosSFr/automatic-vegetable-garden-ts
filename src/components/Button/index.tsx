@@ -1,10 +1,14 @@
 import { Container, Title } from "./styles";
 
-export function Button(){
+type Props = {
+    title: string;
+}
+
+export function Button({ title }: Props){
     return (
         <Container>
             <Title>
-                Login
+                {title}
             </Title>
         </Container>
     )

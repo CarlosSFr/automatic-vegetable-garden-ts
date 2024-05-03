@@ -23,7 +23,9 @@ export function Login(){
                 <ForgotPass>
                     Esqueceu sua senha?
                 </ForgotPass>
-                <Button />
+                <Button 
+                    title="Login"
+                />
                 <Register>
                     Não possui uma conta? <Text style={{ fontWeight: 'bold' }}>Cadastre-se</Text>
                 </Register>
