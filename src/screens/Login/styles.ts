@@ -13,13 +13,29 @@ export const ImageContainer = styled.ImageBackground`
 
 export const Title = styled.Text`
     color: ${props => props.theme.colors.white};
-    font-size: 64px;
+    font-size: ${props => props.theme.font_size.XXXL};
     font-weight: bold;
     width: 100%;
 `
 
 export const Subtitle = styled.Text`
     color: ${props => props.theme.colors.white};
-    font-size: 42px;
+    font-size: ${props => props.theme.font_size.XXL};
     width: 100%;
+`
+
+export const ForgotPass = styled.Text`
+    font-size: ${props => props.theme.font_size.SM}px;
+    color: ${props => props.theme.colors.white};
+    width: 100%;
+    /* padding: 10px 0 10px 230px; */
+    padding: 10px;
+    text-align: right;
+`
+
+export const Register = styled.Text`
+    font-size: ${props => props.theme.font_size.SM}px;
+    color: ${props => props.theme.colors.white};
+    width: 100%;
+    padding-top: 10px;
 `

@@ -1,7 +1,8 @@
-import { Container, ImageContainer, Subtitle, Title } from "./styles";
+import { Container, ForgotPass, ImageContainer, Register, Subtitle, Title } from "./styles";
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import { Text } from "react-native";
 
 export function Login(){
     return(
@@ -19,7 +20,13 @@ export function Login(){
                 <Input
                     placeholder="Senha"
                 />
+                <ForgotPass>
+                    Esqueceu sua senha?
+                </ForgotPass>
                 <Button />
+                <Register>
+                    Não possui uma conta? <Text style={{ fontWeight: 'bold' }}>Cadastre-se</Text>
+                </Register>
             </Container>
         </ImageContainer>
     )
