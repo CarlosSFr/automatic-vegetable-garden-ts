@@ -1,11 +1,11 @@
 import { ThemeProvider } from 'styled-components';
 import theme from "./src/theme"
-import { SignIn } from './src/screens/SignIn';
+import { Home } from './src/screens/Home';
 
 export default function App() {
   return (
     <ThemeProvider theme={theme} >
-      <SignIn />
+      <Home />
     </ThemeProvider>
   );
 }

@@ -1,46 +1,49 @@
 import { ImageContainer, Subtitle } from "../Login/styles";
-import { ButtonContainer, Container, SideLines, SmallText, StyleContainer } from "./styles";
+import { ButtonContainer, Container, GoogleButton, GoogleButtonText, SideLines, SmallText, StyleContainer } from "./styles";
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import { GoogleLogo } from "phosphor-react-native";
+import { Text } from "react-native";
 
 export function SignIn() {
     return (
         <ImageContainer source={imgBg}>
             <Container>
-                <Subtitle style={{ fontWeight: 'bold' }}>
+                <Subtitle style={{ fontWeight: 'bold', paddingBottom: 40 }}>
                     Faça seu cadastro
                 </Subtitle>
-                <Input 
+                <Input
                     placeholder="Seu nome"
                 />
-                <Input 
+                <Input
                     placeholder="Telefone"
                 />
-                <Input 
+                <Input
                     placeholder="E-mail"
                 />
-                <Input 
+                <Input
                     placeholder="Senha"
                 />
-                <Input 
+                <Input
                     placeholder="Confirme sua senha"
                 />
-                <ButtonContainer>
+                <ButtonContainer style={{ marginTop: 42 }}>
                     <Button
                         title="Cadastrar"
                     />
                 </ButtonContainer>
                 <StyleContainer>
                     <SideLines />
-                        <SmallText>
-                            Ou
-                        </SmallText>
+                    <SmallText>
+                        Ou
+                    </SmallText>
                     <SideLines />
                 </StyleContainer>
-                <Button
-                        title="Faça login com Google"
-                />
+                <GoogleButton>
+                    <GoogleLogo size={32} color="white" />
+                    <GoogleButtonText>Faça login com Google</GoogleButtonText>
+                </GoogleButton>
             </Container>
         </ImageContainer>
     )

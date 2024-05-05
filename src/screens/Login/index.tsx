@@ -4,8 +4,8 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { Text } from "react-native";
 
-export function Login(){
-    return(
+export function Login() {
+    return (
         <ImageContainer source={imgBg}>
             <Container>
                 <Title>
@@ -23,7 +23,7 @@ export function Login(){
                 <ForgotPass>
                     Esqueceu sua senha?
                 </ForgotPass>
-                <Button 
+                <Button
                     title="Login"
                 />
                 <Register>
