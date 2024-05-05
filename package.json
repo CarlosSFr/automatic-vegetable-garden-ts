@@ -9,7 +9,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/roboto-condensed": "^0.2.3",
     "expo": "~50.0.14",
+    "expo-font": "~11.10.3",
     "expo-status-bar": "~1.11.1",
     "phosphor-react-native": "^2.0.0",
     "react": "18.2.0",
