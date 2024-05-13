@@ -1,49 +1,34 @@
-import { ImageContainer, Subtitle } from "../Login/styles";
-import { ButtonContainer, Container, GoogleButton, GoogleButtonText, SideLines, SmallText, StyleContainer } from "./styles";
+import { Container, ForgotPass, ImageContainer, Register, Subtitle, Title } from "./styles";
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { GoogleLogo } from "phosphor-react-native";
 import { Text } from "react-native";
 
 export function SignIn() {
     return (
         <ImageContainer source={imgBg}>
             <Container>
-                <Subtitle style={{ fontWeight: 'bold', paddingBottom: 40 }}>
-                    Faça seu cadastro
+                <Title>
+                    Sua horta facilmente
+                </Title>
+                <Subtitle>
+                    em qualquer lugar
                 </Subtitle>
-                <Input
-                    placeholder="Seu nome"
-                />
-                <Input
-                    placeholder="Telefone"
-                />
                 <Input
                     placeholder="E-mail"
                 />
                 <Input
                     placeholder="Senha"
                 />
-                <Input
-                    placeholder="Confirme sua senha"
+                <ForgotPass>
+                    Esqueceu sua senha?
+                </ForgotPass>
+                <Button
+                    title="Login"
                 />
-                <ButtonContainer style={{ marginTop: 42 }}>
-                    <Button
-                        title="Cadastrar"
-                    />
-                </ButtonContainer>
-                <StyleContainer>
-                    <SideLines />
-                    <SmallText>
-                        Ou
-                    </SmallText>
-                    <SideLines />
-                </StyleContainer>
-                <GoogleButton>
-                    <GoogleLogo size={32} color="white" />
-                    <GoogleButtonText>Faça login com Google</GoogleButtonText>
-                </GoogleButton>
+                <Register>
+                    Não possui uma conta? <Text style={{ fontWeight: 'bold' }}>Cadastre-se</Text>
+                </Register>
             </Container>
         </ImageContainer>
     )

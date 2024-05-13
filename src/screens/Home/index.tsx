@@ -1,4 +1,4 @@
-import { ImageContainer } from "../Login/styles";
+import { ImageContainer } from "../SignIn/styles";
 import { ButtonsContainer, Container, EachContainer, Logo, LogoContainer, Logout, LogoutContainer, TextContainer } from "./styles";
 import bgImg from "./../../assets/bg-img-dark.png"
 import logo from "./../../assets/logo.png"
