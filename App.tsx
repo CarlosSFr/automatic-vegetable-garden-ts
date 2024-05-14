@@ -9,8 +9,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme} >
-      {/* {fontsLoaded ? <Routes /> : <Loading />} */}
-      <Routes />
+      {fontsLoaded ? <Routes /> : <Loading />}
     </ThemeProvider>
   );
 }

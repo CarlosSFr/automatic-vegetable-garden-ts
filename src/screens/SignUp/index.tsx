@@ -3,8 +3,7 @@ import { ButtonContainer, Container, GoogleButton, GoogleButtonText, SideLines, 
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { GoogleLogo } from "phosphor-react-native";
-import { Text } from "react-native";
+import { GoogleLogo } from "phosphor-react-native"
 
 export function SignUp() {
     return (
