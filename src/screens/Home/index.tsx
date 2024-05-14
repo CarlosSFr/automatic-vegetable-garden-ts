@@ -3,12 +3,14 @@ import { ButtonsContainer, Container, EachContainer, Logo, LogoContainer, Logout
 import bgImg from "./../../assets/bg-img-dark.png"
 import logo from "./../../assets/logo.png"
 import { Button } from "../../components/Button";
+import { HomeHeader } from "../../components/HomeHeader";
 
 export function Home() {
     return (
         <ImageContainer
             source={bgImg}
         >
+            <HomeHeader />
             <Container>
                 <LogoContainer>
                     <Logo

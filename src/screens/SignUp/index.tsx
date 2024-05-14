@@ -8,7 +8,10 @@ import { Text } from "react-native";
 
 export function SignUp() {
     return (
-        <ImageContainer source={imgBg}>
+        <ImageContainer
+            source={imgBg}
+            defaultSource={imgBg}
+        >
             <Container>
                 <Subtitle style={{ fontWeight: 'bold', paddingBottom: 40 }}>
                     Faça seu cadastro

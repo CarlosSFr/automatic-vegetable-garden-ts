@@ -3,10 +3,26 @@ import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 
 export function SignIn() {
+
+    const navigation = useNavigation<AuthNavigationRoutesProps>();
+
+    function handleSignIn() {
+        //navigation.navigate("")
+    }
+
+    function handleNewAccount() {
+        navigation.navigate("signUp");
+    }
+
     return (
-        <ImageContainer source={imgBg}>
+        <ImageContainer
+            source={imgBg}
+            defaultSource={imgBg}
+        >
             <Container>
                 <Title>
                     Sua horta facilmente
@@ -25,9 +41,16 @@ export function SignIn() {
                 </ForgotPass>
                 <Button
                     title="Login"
+                    onPress={handleSignIn}
                 />
                 <Register>
-                    Não possui uma conta? <Text style={{ fontWeight: 'bold' }}>Cadastre-se</Text>
+                    Não possui uma conta?
+                    <Text
+                        style={{ fontWeight: 'bold' }}
+                        onPress={handleNewAccount}
+                    >
+                        Cadastre-se
+                    </Text>
                 </Register>
             </Container>
         </ImageContainer>
