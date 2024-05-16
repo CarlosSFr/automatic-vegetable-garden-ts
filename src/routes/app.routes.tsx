@@ -3,20 +3,20 @@ import { Home } from "../screens/Home";
 import { Profile } from "../screens/Profile";
 import { PlantData } from "../screens/PlantData";
 import { Control } from "../screens/Control";
-import { Sensors } from "../screens/Sensors";
+import { History } from "../screens/History";
 import { Platform } from "react-native";
 
 import { useTheme } from "styled-components/native";
 
 import HomeSvg from "./../assets/Home.svg"
-import PlantSvg from "./../assets/Plant.svg"
+import HistorySvg from "./../assets/History.svg"
 import PlaySvg from "./../assets/Play.svg"
 
 type AppRoutes = {
     home: undefined;
     profile: undefined;
     plantData: undefined;
-    sensor: undefined;
+    history: undefined;
     control: undefined;
 }
 
@@ -89,11 +89,11 @@ export function AppRoutes() {
             />
 
             <Screen
-                name="sensor"
-                component={Sensors}
+                name="history"
+                component={History}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <PlantSvg
+                        <HistorySvg
                             fill={color}
                             width={32}
                             height={32}

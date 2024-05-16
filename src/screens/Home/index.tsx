@@ -1,4 +1,4 @@
-import { Container, Logout, LogoutContainer} from "./styles";
+import { Container, Logout, LogoutContainer, SensorBox, SensorContainer } from "./styles";
 
 import bgImg from "./../../assets/bg-img-dark.png"
 import { HomeHeader } from "../../components/HomeHeader";
@@ -12,10 +12,27 @@ export function Home() {
         >
             <HomeHeader />
             <Container>
+                <SensorContainer>
+                    <SensorBox>
+
+                    </SensorBox>
+                    <SensorBox>
+
+                    </SensorBox>
+                    <SensorBox>
+
+                    </SensorBox>
+                    <SensorBox>
+
+                    </SensorBox>
+                </SensorContainer>
+
+
+
                 <LogoutContainer>
                     <TouchableOpacity>
                         <Logout>
-                             Logout
+                            Logout
                         </Logout>
                     </TouchableOpacity>
                 </LogoutContainer>
