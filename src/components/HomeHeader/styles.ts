@@ -13,6 +13,7 @@ export const Container = styled.View`
 
 export const TextContainer = styled.View`
     flex-direction: column;
+    margin-left: 12px;
 `
 
 export const HelloText = styled.Text`

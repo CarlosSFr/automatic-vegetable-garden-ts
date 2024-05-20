@@ -1,11 +1,36 @@
 import styled from "styled-components/native";
-import { SafeAreaView } from "react-native-safe-area-context"
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled.View`
     flex: 1;
     align-items: center;
     padding: 30px 30px 30px 30px;
-    gap: 120px;
+    background-color: "green";
+`
+export const SensorBox = styled.View`
+    width: 48%;
+    height: 140px;
+    padding: 12px 14px 0px 14px;
+    background-color: ${props => props.theme.colors.gray_400};
+    border-radius: 8px;
+    margin: 1%;
+`
+export const SensorText = styled.Text`
+    color: ${props => props.theme.colors.white};
+    font-family: ${props => props.theme.font_family.bold};
+    font-size: ${props => props.theme.font_size.MD}px;
+`
+export const ValueBox = styled.View`
+    flex-direction: row;
+    flex: 1;
+    padding-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+`
+export const ValueText = styled.Text`
+    color: ${props => props.theme.colors.green_700};
+    font-family: ${props => props.theme.font_family.bold};
+    font-size: ${props => props.theme.font_size.XLL}px;
 `
 
 export const LogoutContainer = styled.View`
@@ -22,16 +47,3 @@ export const Logout = styled.Text`
     padding: 13px;
 `
 
-export const SensorContainer = styled.View`
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-`
-
-export const SensorBox = styled.View`
-    width: 170px;
-    height: 140px;
-    padding: 12px 14px 0px 14px;
-    background-color: ${props => props.theme.colors.gray_400};
-    border-radius: 8px;
-`

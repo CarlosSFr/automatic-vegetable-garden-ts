@@ -1,13 +1,17 @@
-import { Text } from "react-native";
 import { Container, TextContainer } from "./styles";
+import { StatusBar } from "expo-status-bar";
 
 type Props = {
     title: string;
 }
 
-export function TextHeader({title}: Props){
-    return(
+export function TextHeader({ title }: Props) {
+    return (
         <Container>
+            <StatusBar
+                translucent
+                style="light"
+            />
             <TextContainer>
                 {title}
             </TextContainer>

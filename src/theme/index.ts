@@ -29,6 +29,7 @@ export default {
     LG: 18,
     LLG: 20,
     XL: 24,
+    XLL: 32,
     XXL: 40,
     XXXL: 58,
   }

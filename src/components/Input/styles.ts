@@ -6,6 +6,6 @@ export const Container = styled.TextInput`
     background-color: ${props => props.theme.colors.off_white};
     font-size: ${props => props.theme.font_size.MD}px;
     border-radius: 6px;
-    padding: 0px 8px;
+    padding: 0px 14px;
     margin-top: 14px;
 `
