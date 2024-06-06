@@ -10,8 +10,8 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme} >
-      {/* {fontsLoaded ? <Routes /> : <Loading />} */}
-      <Profile />
+      {fontsLoaded ? <Routes /> : <Loading />}
+      {/* <Profile /> */}
     </ThemeProvider>
   );
 }
