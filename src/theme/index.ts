@@ -23,6 +23,7 @@ export default {
     bold: 'RobotoCondensed_700Bold'
   },
   font_size: {
+    SMM: 10,
     SM: 12,
     SSM: 14,
     MD: 16,

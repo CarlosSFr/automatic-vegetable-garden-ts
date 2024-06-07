@@ -15,4 +15,6 @@ export const TextContainer = styled.Text`
     color: ${props => props.theme.colors.white};
     font-size: ${props => props.theme.font_size.XL}px;
     font-weight: bold;
+    flex: 1;
+    text-align: center;
 `

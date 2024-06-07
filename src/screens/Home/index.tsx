@@ -7,8 +7,11 @@ import { Button } from "../../components/Button";
 import { useState } from "react";
 import { Thermometer, DropHalf, Flask, SunDim } from "phosphor-react-native";
 import theme from "../../theme";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 export function Home() {
+    const navigation = useNavigation<AppNavigationRoutesProps>();
     const [sensors, setSensors] = useState(["Temperatura", "Umidade", "Luminosidade", "pH"]);
     const sensorData = {
         "Temperatura": { value: "14", unit: "°C" },
@@ -22,6 +25,10 @@ export function Home() {
         "Luminosidade": SunDim,
         "pH": Flask
     };
+
+    function handleGoToPlantData() {
+        navigation.navigate("plantData");
+    }
 
     return (
         <ImageContainer
@@ -60,6 +67,7 @@ export function Home() {
                     title="Acessar dados"
                     type="DATA"
                     style={{ marginBottom: 60 }}
+                    onPress={handleGoToPlantData}
                 />
 
                 <LogoutContainer>

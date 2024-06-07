@@ -1,0 +1,34 @@
+{
+    "plants": [
+        {
+            "id": "0",
+            "title": "Tomate cereja",
+            "irrigationTime": "12h",
+            "photo": "./src/assets/data/cherry-tomatoes.jpg"
+        },
+        {
+            "id": "1",
+            "title": "Salsinha",
+            "irrigationTime": "20h",
+            "photo": "./src/assets/data/cherry-tomatoes.jpg"
+        },
+        {
+            "id": "2",
+            "title": "Morango",
+            "irrigationTime": "32h",
+            "photo": "./src/assets/data/cherry-tomatoes.jpg"
+        },
+        {
+            "id": "3",
+            "title": "Repolho",
+            "irrigationTime": "40h",
+            "photo": "./src/assets/data/cherry-tomatoes.jpg"
+        },
+        {
+            "id": "4",
+            "title": "Beterraba",
+            "irrigationTime": "36h",
+            "photo": "./src/assets/data/cherry-tomatoes.jpg"
+        }
+    ]
+}

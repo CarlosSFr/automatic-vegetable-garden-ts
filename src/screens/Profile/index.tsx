@@ -7,7 +7,6 @@ import { ProfilePic } from "../../components/ProfilePic";
 import { Input } from "../../components/Input";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
-import { useNavigation } from "@react-navigation/native";
 
 export function Profile() {
     return (
