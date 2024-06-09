@@ -9,6 +9,7 @@ export const DataCardContainer = styled.View`
     justify-content: space-between;
     padding: 14px 10px;
     flex-direction: row;
+    margin-bottom: 14px;
 `
 
 export const DataTitle = styled.Text`

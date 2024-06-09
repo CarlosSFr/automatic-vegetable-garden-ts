@@ -4,6 +4,7 @@ import { Profile } from "../screens/Profile";
 import { PlantData } from "../screens/PlantData";
 import { Control } from "../screens/Control";
 import { History } from "../screens/History";
+import { Modules } from "../screens/Modules";
 import { Platform } from "react-native";
 
 import { useTheme } from "styled-components/native";
@@ -18,6 +19,7 @@ type AppRoutes = {
     plantData: undefined;
     history: undefined;
     control: undefined;
+    modules: undefined;
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -61,6 +63,14 @@ export function AppRoutes() {
             <Screen
                 name="profile"
                 component={Profile}
+                options={{
+                    tabBarButton: () => null,
+                }}
+            />
+
+            <Screen
+                name="modules"
+                component={Modules}
                 options={{
                     tabBarButton: () => null,
                 }}

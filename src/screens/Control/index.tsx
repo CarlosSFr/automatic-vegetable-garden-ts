@@ -5,8 +5,17 @@ import { Container, IrrigationText, ModuleConfig, ModuleText, Timer } from "./st
 import { CaretCircleDown } from "phosphor-react-native";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 export function Control() {
+    const navigation = useNavigation<AppNavigationRoutesProps>()
+
+
+    function handleGoToConfig() {
+        navigation.navigate("modules");
+    }
+
     return (
         <ImageContainer
             source={bgImg}
@@ -35,6 +44,11 @@ export function Control() {
                 <Button
                     title="Regar plantas"
                     type="PLAY"
+                    style={{ marginBottom: 14 }}
+                />
+                <Button
+                    title="Configurar módulos"
+                    onPress={handleGoToConfig}
                 />
 
             </Container>
