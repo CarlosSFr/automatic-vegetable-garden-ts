@@ -7,8 +7,27 @@ import { ProfilePic } from "../../components/ProfilePic";
 import { Input } from "../../components/Input";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
+import * as ImagePicker from "expo-image-picker"
+import { useState } from "react";
 
 export function Profile() {
+    const [userPhoto, setUserPhoto] = useState("https://github.com/CarlosSFr.png")
+
+    async function handleUserPhotoSelect() {
+        const photoSelected = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+            aspect: [4, 4],
+            allowsEditing: true,
+        });
+
+        if (photoSelected.canceled) {
+            return;
+        }
+
+        setUserPhoto(photoSelected.assets[0].uri)
+    }
+
     return (
         <ImageContainer
             source={bgImg}
@@ -20,9 +39,9 @@ export function Profile() {
                 <Container>
                     <ProfilePic
                         size={148}
-                        source={{ uri: "https://github.com/CarlosSFr.png" }}
+                        source={{ uri: userPhoto }}
                     />
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleUserPhotoSelect}>
                         <ChangePhotoText>
                             Alterar foto
                         </ChangePhotoText>
