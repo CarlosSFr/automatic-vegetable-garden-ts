@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity } from "react-native";
+import { Alert, ScrollView, TouchableOpacity } from "react-native";
 import { BackHeader } from "../../components/BackHeader";
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png"
@@ -8,6 +8,7 @@ import { Input } from "../../components/Input";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
+import * as FileSystem from "expo-file-system"
 import { useState } from "react";
 
 export function Profile() {
@@ -25,7 +26,16 @@ export function Profile() {
             return;
         }
 
-        setUserPhoto(photoSelected.assets[0].uri)
+        if(photoSelected.assets[0].uri){
+            // const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri);
+            
+            // if(photoInfo.exists && photoInfo.size / 1024 / 1024 > 4){
+            //     return Alert.alert("Escolha uma imagem de até 5MB")
+            // }
+
+            setUserPhoto(photoSelected.assets[0].uri);
+        }
+        
     }
 
     return (
