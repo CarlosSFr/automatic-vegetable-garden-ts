@@ -3,7 +3,6 @@ import theme from "./src/theme"
 import { RobotoCondensed_400Regular, RobotoCondensed_700Bold, useFonts } from "@expo-google-fonts/roboto-condensed"
 import { Loading } from './src/components/Loading';
 import { Routes } from './src/routes';
-import { Profile } from './src/screens/Profile';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ RobotoCondensed_400Regular, RobotoCondensed_700Bold });
@@ -11,7 +10,6 @@ export default function App() {
   return (
     <ThemeProvider theme={theme} >
       {fontsLoaded ? <Routes /> : <Loading />}
-      {/* <Profile /> */}
     </ThemeProvider>
   );
 }

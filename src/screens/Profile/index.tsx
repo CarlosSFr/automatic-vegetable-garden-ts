@@ -26,16 +26,16 @@ export function Profile() {
             return;
         }
 
-        if(photoSelected.assets[0].uri){
-            // const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri);
-            
-            // if(photoInfo.exists && photoInfo.size / 1024 / 1024 > 4){
-            //     return Alert.alert("Escolha uma imagem de até 5MB")
-            // }
+        if (photoSelected.assets[0].uri) {
+            const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri);
+
+            if (photoInfo.exists && (photoInfo.size / 1024 / 1024) > 5) {
+                return Alert.alert("Escolha uma imagem de até 5MB")
+            }
 
             setUserPhoto(photoSelected.assets[0].uri);
         }
-        
+
     }
 
     return (
