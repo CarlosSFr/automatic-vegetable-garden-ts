@@ -6,17 +6,27 @@ import { Button } from "../../components/Button";
 import { GoogleLogo } from "phosphor-react-native"
 import { Controller, useForm } from "react-hook-form"
 import { ScrollView, Text } from "react-native";
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 type FormDataProps = {
     name: string;
-    phone: string;
     email: string;
     password: string;
     confirmPassword: string;
 }
 
+const signUpSchema = yup.object({
+    name: yup.string().required("Informe o nome."),
+    email: yup.string().required("Informe o e-mail.").email("E-mail inválido."),
+    password: yup.string().required("Informe a senha.").min(6, "A senha deve ter no mínimo 6 digitos."),
+    confirmPassword: yup.string().required("Confirme a senha.").oneOf([yup.ref("password")], "A senha não confere.")
+});
+
 export function SignUp() {
-    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>();
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
+        resolver: yupResolver(signUpSchema)
+    });
 
     function handleSignUp(data: any) {
 
@@ -36,9 +46,6 @@ export function SignUp() {
                 <Controller
                     control={control}
                     name="name"
-                    rules={{
-                        required: "Informe o nome."
-                    }}
                     render={({ field: { onChange, value } }) => (
                         <Input
                             placeholder="Seu nome"
@@ -48,7 +55,7 @@ export function SignUp() {
                     )}
                 />
                     {errors.name && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5}}>
+                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
                             {errors.name.message}
                         </Text>
                     )}
@@ -65,6 +72,11 @@ export function SignUp() {
                         />
                     )}
                 />
+                {errors.email && (
+                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                            {errors.email.message}
+                        </Text>
+                    )}
 
                 <Controller
                     control={control}
@@ -74,10 +86,16 @@ export function SignUp() {
                             placeholder="Senha"
                             onChangeText={onChange}
                             value={value}
-
+                            secureTextEntry
                         />
                     )}
                 />
+
+                    {errors.password && (
+                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                            {errors.password.message}
+                        </Text>
+                    )}
 
                 <Controller
                     control={control}
@@ -89,10 +107,15 @@ export function SignUp() {
                             value={value}
                             onSubmitEditing={handleSubmit(handleSignUp)}
                             returnKeyType="send"
-
+                            secureTextEntry
                         />
                     )}
                 />
+                {errors.confirmPassword && (
+                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                            {errors.confirmPassword.message}
+                        </Text>
+                    )}
 
                 <ButtonContainer style={{ marginTop: 42 }}>
                     <Button
