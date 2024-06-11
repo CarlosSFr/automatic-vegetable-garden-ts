@@ -9,6 +9,9 @@ export const Container = styled.View`
 
 export const ImageContainer = styled.ImageBackground`
     flex: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
 `
 
 export const Title = styled.Text`
@@ -20,8 +23,9 @@ export const Title = styled.Text`
 
 export const Subtitle = styled.Text`
     color: ${props => props.theme.colors.white};
-    font-size: ${props => props.theme.font_size.XXL}px;
+    font-size: ${props => props.theme.font_size.XLL}px;
     width: 100%;
+    flex-wrap: nowrap;
 `
 
 export const ForgotPass = styled.Text`

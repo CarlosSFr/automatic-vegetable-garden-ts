@@ -4,7 +4,7 @@ export const Container = styled.View`
     flex: 1;
     align-items: center;
     justify-content: center;
-    padding: 60px 30px 0px 30px;
+    padding: 55% 30px 0px 30px;
 `
 
 export const ButtonContainer = styled.View`

@@ -50,7 +50,7 @@ export function SignIn() {
                             style={{ fontWeight: 'bold' }}
                             onPress={handleNewAccount}
                         >
-                            Cadastre-se
+                            {" "}Cadastre-se
                         </Text>
                     </Register>
                 </Container>

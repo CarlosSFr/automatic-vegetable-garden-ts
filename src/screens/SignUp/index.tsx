@@ -5,7 +5,7 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { GoogleLogo } from "phosphor-react-native"
 import { Controller, useForm } from "react-hook-form"
-import { Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 
 type FormDataProps = {
     name: string;
@@ -27,8 +27,9 @@ export function SignUp() {
             source={imgBg}
             defaultSource={imgBg}
         >
+            <ScrollView>
             <Container>
-                <Subtitle style={{ fontWeight: 'bold', paddingBottom: 40 }}>
+                <Subtitle style={{ fontWeight: 'bold', paddingBottom: 20 }}>
                     Faça seu cadastro
                 </Subtitle>
 
@@ -46,38 +47,21 @@ export function SignUp() {
                         />
                     )}
                 />
-
-                <Text style={{ color: "red" }}>
-                    {errors.name?.message}
-                </Text>
-
-                <Controller
-                    control={control}
-                    name="phone"
-                    render={({ field: { onChange, value } }) => (
-                        <Input
-                            placeholder="Telefone"
-                            onChangeText={onChange}
-                            value={value}
-                        />
+                    {errors.name && (
+                        <Text style={{color: "red", marginTop: 5, marginBottom: -5}}>
+                            {errors.name.message}
+                        </Text>
                     )}
-                />
 
                 <Controller
                     control={control}
                     name="email"
-                    rules={{
-                        required: "Informe o nome.",
-                        pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'E-mail inválido'
-                        }
-                    }}
                     render={({ field: { onChange, value } }) => (
                         <Input
                             placeholder="E-mail"
                             onChangeText={onChange}
                             value={value}
+
                         />
                     )}
                 />
@@ -90,6 +74,7 @@ export function SignUp() {
                             placeholder="Senha"
                             onChangeText={onChange}
                             value={value}
+
                         />
                     )}
                 />
@@ -104,6 +89,7 @@ export function SignUp() {
                             value={value}
                             onSubmitEditing={handleSubmit(handleSignUp)}
                             returnKeyType="send"
+
                         />
                     )}
                 />
@@ -126,6 +112,7 @@ export function SignUp() {
                     <GoogleButtonText>Faça login com Google</GoogleButtonText>
                 </GoogleButton>
             </Container>
+            </ScrollView>
         </ImageContainer>
     )
 }
