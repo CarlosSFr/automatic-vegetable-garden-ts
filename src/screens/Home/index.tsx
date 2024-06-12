@@ -4,21 +4,36 @@ import { HomeHeader } from "../../components/HomeHeader";
 import { FlatList, TouchableOpacity } from "react-native";
 import { ImageContainer } from "../SignIn/styles";
 import { Button } from "../../components/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Thermometer, DropHalf, Flask, SunDim } from "phosphor-react-native";
 import theme from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
+import { db, ref, onValue } from "./../../../firebase"
+
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
-    const [sensors, setSensors] = useState(["Temperatura", "Umidade", "Luminosidade", "pH"]);
+    const sensors = ["Temperatura", "Umidade", "Luminosidade", "pH"];
+    const [temp, setTemp] = useState(0);
+    const [humid, setHumid] = useState(0);
+
+    useEffect(() => {
+        const data = ref(db);
+
+        onValue(data, (snapshot) => {
+            setTemp(snapshot.val().temp)
+            setHumid(snapshot.val().humid)
+        });
+    }, [db])
+
     const sensorData = {
-        "Temperatura": { value: "14", unit: "°C" },
-        "Umidade": { value: "70", unit: "%" },
+        "Temperatura": { value: temp, unit: "°C" },
+        "Umidade": { value: humid, unit: "%" },
         "Luminosidade": { value: "80", unit: "" },
         "pH": { value: "7.6", unit: "" }
     };
+
     const iconMapping = {
         "Temperatura": Thermometer,
         "Umidade": DropHalf,

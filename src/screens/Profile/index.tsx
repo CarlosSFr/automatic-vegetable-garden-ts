@@ -1,4 +1,4 @@
-import { Alert, ScrollView, TouchableOpacity } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity } from "react-native";
 import { BackHeader } from "../../components/BackHeader";
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png"
@@ -10,9 +10,29 @@ import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
 import * as FileSystem from "expo-file-system"
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup";
+
+type FormProfileProps = {
+    name: string;
+    oldPassword: string;
+    password: string;
+    confirmPassword: string;
+}
+
+const profileSchema = yup.object({
+    name: yup.string().required("Informe o nome."),
+    oldPassword: yup.string().required("Informe a senha.").min(6, "A senha deve ter no mínimo 6 digitos."),
+    password: yup.string().required("Informe a senha.").min(6, "A senha deve ter no mínimo 6 digitos."),
+    confirmPassword: yup.string().required("Confirme a senha.").oneOf([yup.ref("password")], "A senha não confere.")
+})
 
 export function Profile() {
     const [userPhoto, setUserPhoto] = useState("https://github.com/CarlosSFr.png")
+    const { control, handleSubmit, formState: { errors } } = useForm<FormProfileProps>({
+        resolver: yupResolver(profileSchema)
+    });
 
     async function handleUserPhotoSelect() {
         const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -38,6 +58,10 @@ export function Profile() {
 
     }
 
+    function handleChangeData(data: any) {
+        console.log(data)
+    }
+
     return (
         <ImageContainer
             source={bgImg}
@@ -51,16 +75,32 @@ export function Profile() {
                         size={148}
                         source={{ uri: userPhoto }}
                     />
+
                     <TouchableOpacity onPress={handleUserPhotoSelect}>
                         <ChangePhotoText>
                             Alterar foto
                         </ChangePhotoText>
                     </TouchableOpacity>
-                    <Input
-                        placeholder="Carlos Eduardo"
-                        style={{ backgroundColor: theme.colors.off_white }}
-                        placeholderColor={theme.colors.gray_700}
+
+                    <Controller
+                        control={control}
+                        name="name"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Nome do usuário"
+                                onChangeText={onChange}
+                                value={value}
+                                style={{ backgroundColor: theme.colors.off_white }}
+                                placeholderColor={theme.colors.gray_700}
+                            />
+                        )}
                     />
+                    {errors.name && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold", width: "100%" }}>
+                            {errors.name.message}
+                        </Text>
+                    )}
+
                     <Input
                         placeholder="carlos.edfrei@gmail.com"
                         style={{ backgroundColor: theme.colors.gray_200 }}
@@ -72,27 +112,64 @@ export function Profile() {
                     <ChangePass>
                         Alterar senha
                     </ChangePass>
-                    <Input
-                        placeholder="Senha antiga"
-                        style={{ backgroundColor: theme.colors.off_white }}
-                        placeholderColor={theme.colors.gray_300}
-                        secureTextEntry
+                    <Controller
+                        control={control}
+                        name="oldPassword"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Senha antiga"
+                                onChangeText={onChange}
+                                value={value}
+                                secureTextEntry
+                            />
+                        )}
                     />
-                    <Input
-                        placeholder="Nova senha"
-                        style={{ backgroundColor: theme.colors.off_white }}
-                        placeholderColor={theme.colors.gray_300}
-                        secureTextEntry
+                    {errors.oldPassword && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
+                            {errors.oldPassword.message}
+                        </Text>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="password"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Nova senha"
+                                onChangeText={onChange}
+                                value={value}
+                                secureTextEntry
+                            />
+                        )}
                     />
-                    <Input
-                        placeholder="Confirme a nova senha"
-                        style={{ backgroundColor: theme.colors.off_white }}
-                        placeholderColor={theme.colors.gray_300}
-                        secureTextEntry
+                    {errors.password && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
+                            {errors.password.message}
+                        </Text>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="confirmPassword"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Confirme a nova senha"
+                                onChangeText={onChange}
+                                value={value}
+                                secureTextEntry
+                            />
+                        )}
                     />
+                    {errors.confirmPassword && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
+                            {errors.confirmPassword.message}
+                        </Text>
+                    )}
+
                     <Button
                         title="Alterar"
                         style={{ marginTop: 30 }}
+                        onPress={handleSubmit(handleChangeData)}
                     />
                 </ContainerLeft>
             </ScrollView>
