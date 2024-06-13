@@ -15,7 +15,9 @@ export function DataCard({ adress, title, description, ...rest }: Props) {
             <LeftContainer>
                 <DataPic
                     {...rest}
-                    src={adress}
+                    source={{uri: adress}}
+                    width={40}
+                    height={40}
                 />
                 <AlignTextContainer>
                     <DataTitle>

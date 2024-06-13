@@ -3,31 +3,91 @@
         {
             "id": "0",
             "title": "Tomate cereja",
-            "irrigationTime": "12h",
+            "irrigationTime": "24h",
             "photo": "cherry-tomatoes.jpg"
         },
         {
             "id": "1",
             "title": "Salsinha",
-            "irrigationTime": "20h",
+            "irrigationTime": "72h",
             "photo": "cherry-tomatoes.jpg"
         },
         {
             "id": "2",
             "title": "Morango",
-            "irrigationTime": "32h",
+            "irrigationTime": "48h",
             "photo": "cherry-tomatoes.jpg"
         },
         {
             "id": "3",
             "title": "Repolho",
-            "irrigationTime": "40h",
+            "irrigationTime": "72h",
             "photo": "cherry-tomatoes.jpg"
         },
         {
             "id": "4",
             "title": "Beterraba",
-            "irrigationTime": "36h",
+            "irrigationTime": "72h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "5",
+            "title": "Alface",
+            "irrigationTime": "48h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "6",
+            "title": "Cenoura",
+            "irrigationTime": "96h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "7",
+            "title": "Rúcula",
+            "irrigationTime": "48h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "8",
+            "title": "Cebolinha",
+            "irrigationTime": "96h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "9",
+            "title": "Manjericão",
+            "irrigationTime": "48h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "10",
+            "title": "Coentro",
+            "irrigationTime": "72h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "11",
+            "title": "Pimentão",
+            "irrigationTime": "72h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "12",
+            "title": "Rabanete",
+            "irrigationTime": "72h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "13",
+            "title": "Espinafre",
+            "irrigationTime": "72h",
+            "photo": "cherry-tomatoes.jpg"
+        },
+        {
+            "id": "14",
+            "title": "Pepino",
+            "irrigationTime": "72h",
             "photo": "cherry-tomatoes.jpg"
         }
     ]
