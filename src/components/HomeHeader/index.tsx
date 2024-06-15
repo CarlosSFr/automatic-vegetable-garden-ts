@@ -4,6 +4,7 @@ import logo from "./../../assets/logo.png"
 import { TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
+import { StatusBar } from "expo-status-bar";
 
 
 export function HomeHeader() {
@@ -15,6 +16,10 @@ export function HomeHeader() {
 
     return (
         <Container>
+            <StatusBar
+                translucent
+                style="light"
+            />
             <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity onPress={handleGoToProfile} >
                     <ProfilePic

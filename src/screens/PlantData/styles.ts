@@ -5,8 +5,9 @@ export const Container = styled.View`
 `
 
 export const DataContainer = styled.View`
-    padding: 14px 14px 0px 14px;
+    padding: 14px 14px 50px 14px;
     background-color: ${props => props.theme.colors.gray_400};
     min-height: 88px;
     border-radius: 8px;
+    margin-bottom: 50px;
 `
