@@ -9,8 +9,9 @@ import { Thermometer, DropHalf, Flask, SunDim } from "phosphor-react-native";
 import theme from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
+import { FIREBASE_AUTH } from "../../../firebaseESP";
 
-import { db, ref, onValue } from "./../../../firebase"
+import { db, ref, onValue } from "../../../firebaseESP"
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
@@ -86,7 +87,7 @@ export function Home() {
                 />
 
                 <LogoutContainer>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()}>
                         <Logout>
                             Logout
                         </Logout>

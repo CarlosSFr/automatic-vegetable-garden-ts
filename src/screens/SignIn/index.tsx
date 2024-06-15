@@ -8,6 +8,10 @@ import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { FIREBASE_AUTH } from "../../../firebaseESP";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 type FormSignInProps = {
     email: string;
@@ -20,13 +24,25 @@ const signInSchema = yup.object({
 })
 
 export function SignIn() {
-    const {control, handleSubmit, formState: {errors}} = useForm<FormSignInProps>({
+    const { control, handleSubmit, formState: { errors } } = useForm<FormSignInProps>({
         resolver: yupResolver(signInSchema)
     })
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
+    const auth = FIREBASE_AUTH;
+
     const navigation = useNavigation<AuthNavigationRoutesProps>();
 
-    function handleSignIn(data: any) {
-        console.log(data)
+    async function handleSignIn() {
+        setLoading(true)
+        try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+        } catch (error: any) {
+            alert("Login falhou: " + error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     function handleNewAccount() {
@@ -38,6 +54,10 @@ export function SignIn() {
             source={imgBg}
             defaultSource={imgBg}
         >
+            <StatusBar
+                translucent
+                style="light"
+            />
             <ScrollView>
                 <Container>
                     <Title>
@@ -46,19 +66,20 @@ export function SignIn() {
                     <Subtitle>
                         em qualquer lugar
                     </Subtitle>
-                        <Controller
+                    <Controller
                         control={control}
                         name="email"
                         render={({ field: { onChange, value } }) => (
                             <Input
                                 placeholder="E-mail"
+                                autoCapitalize="none"
                                 value={value}
-                                onChangeText={onChange}
+                                onChangeText={(value) => { onChange(value); setEmail(value); }}
                             />
                         )}
-                        />
+                    />
                     {errors.email && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.email.message}
                         </Text>
                     )}
@@ -70,13 +91,13 @@ export function SignIn() {
                             <Input
                                 placeholder="Senha"
                                 value={value}
-                                onChangeText={onChange}
+                                onChangeText={(value) => { onChange(value); setPassword(value); }}
                                 secureTextEntry
                             />
                         )}
-                        />
+                    />
                     {errors.password && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.password.message}
                         </Text>
                     )}

@@ -5,9 +5,12 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { GoogleLogo } from "phosphor-react-native"
 import { Controller, useForm } from "react-hook-form"
-import { ScrollView, Text } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../../firebaseESP";
 
 type FormDataProps = {
     name: string;
@@ -27,9 +30,22 @@ export function SignUp() {
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
     });
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const auth = FIREBASE_AUTH;
 
-    function handleSignUp(data: any) {
-
+    async function handleSignUp() {
+        setLoading(true)
+        try {
+            const response = await createUserWithEmailAndPassword(auth, email, password);
+            console.log(response)
+            alert("Teste")
+        } catch (error: any) {
+            alert("Não foi possível criar sua conta: " + error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -38,104 +54,105 @@ export function SignUp() {
             defaultSource={imgBg}
         >
             <ScrollView>
-            <Container>
-                <Subtitle style={{ fontWeight: 'bold', paddingBottom: 20 }}>
-                    Faça seu cadastro
-                </Subtitle>
+                <Container>
+                    <Subtitle style={{ fontWeight: 'bold', paddingBottom: 20 }}>
+                        Faça seu cadastro
+                    </Subtitle>
 
-                <Controller
-                    control={control}
-                    name="name"
-                    render={({ field: { onChange, value } }) => (
-                        <Input
-                            placeholder="Seu nome"
-                            onChangeText={onChange}
-                            value={value}
-                        />
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="name"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Seu nome"
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                        )}
+                    />
                     {errors.name && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.name.message}
                         </Text>
                     )}
 
-                <Controller
-                    control={control}
-                    name="email"
-                    render={({ field: { onChange, value } }) => (
-                        <Input
-                            placeholder="E-mail"
-                            onChangeText={onChange}
-                            value={value}
-
-                        />
-                    )}
-                />
-                {errors.email && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="E-mail"
+                                onChangeText={(value) => { onChange(value); setEmail(value); }}
+                                value={value}
+                                autoCapitalize="none"
+                            />
+                        )}
+                    />
+                    {errors.email && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.email.message}
                         </Text>
                     )}
 
-                <Controller
-                    control={control}
-                    name="password"
-                    render={({ field: { onChange, value } }) => (
-                        <Input
-                            placeholder="Senha"
-                            onChangeText={onChange}
-                            value={value}
-                            secureTextEntry
-                        />
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="password"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Senha"
+                                onChangeText={(value) => { onChange(value); setPassword(value); }}
+                                value={value}
+                                secureTextEntry
+                            />
+                        )}
+                    />
 
                     {errors.password && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.password.message}
                         </Text>
                     )}
 
-                <Controller
-                    control={control}
-                    name="confirmPassword"
-                    render={({ field: { onChange, value } }) => (
-                        <Input
-                            placeholder="Confirme sua senha"
-                            onChangeText={onChange}
-                            value={value}
-                            onSubmitEditing={handleSubmit(handleSignUp)}
-                            returnKeyType="send"
-                            secureTextEntry
-                        />
-                    )}
-                />
-                {errors.confirmPassword && (
-                        <Text style={{color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold"}}>
+                    <Controller
+                        control={control}
+                        name="confirmPassword"
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="Confirme sua senha"
+                                onChangeText={onChange}
+                                value={value}
+                                onSubmitEditing={handleSubmit(handleSignUp)}
+                                returnKeyType="send"
+                                secureTextEntry
+                            />
+                        )}
+                    />
+                    {errors.confirmPassword && (
+                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
                             {errors.confirmPassword.message}
                         </Text>
                     )}
 
-                <ButtonContainer style={{ marginTop: 42 }}>
-                    <Button
-                        title="Cadastrar"
-                        onPress={handleSubmit(handleSignUp)}
-                    />
-                </ButtonContainer>
-                <StyleContainer>
-                    <SideLines />
-                    <SmallText>
-                        Ou
-                    </SmallText>
-                    <SideLines />
-                </StyleContainer>
-                <GoogleButton>
-                    <GoogleLogo size={32} color="white" />
-                    <GoogleButtonText>Faça login com Google</GoogleButtonText>
-                </GoogleButton>
-            </Container>
+                    <ButtonContainer style={{ marginTop: 42 }}>
+                        <Button
+                            title="Cadastrar"
+                            onPress={handleSubmit(handleSignUp)}
+                        />
+                    </ButtonContainer>
+                    <StyleContainer>
+                        <SideLines />
+                        <SmallText>
+                            Ou
+                        </SmallText>
+                        <SideLines />
+                    </StyleContainer>
+                    <GoogleButton>
+                        <GoogleLogo size={32} color="white" />
+                        <GoogleButtonText>Faça login com Google</GoogleButtonText>
+                    </GoogleButton>
+                </Container>
             </ScrollView>
-        </ImageContainer>
+
+        </ImageContainer >
     )
 }
