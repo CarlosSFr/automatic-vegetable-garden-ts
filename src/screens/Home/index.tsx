@@ -7,11 +7,12 @@ import { Button } from "../../components/Button";
 import { useEffect, useState } from "react";
 import { Thermometer, DropHalf, Flask, SunDim } from "phosphor-react-native";
 import theme from "../../theme";
+
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
-import { FIREBASE_AUTH } from "../../../firebaseESP";
 
-import { db, ref, onValue } from "../../../firebaseESP"
+import { FIREBASE_AUTH } from "../../../firebase";
+import { db, ref, onValue } from "../../../firebase"
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();

@@ -2,7 +2,7 @@ import { Container, ForgotPass, ImageContainer, Register, Subtitle, Title } from
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { ScrollView, Text } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 import { Controller, useForm } from "react-hook-form";
@@ -10,8 +10,9 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { FIREBASE_AUTH } from "../../../firebaseESP";
+import { FIREBASE_AUTH } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { Loading } from "../../components/Loading";
 
 type FormSignInProps = {
     email: string;
@@ -93,6 +94,9 @@ export function SignIn() {
                                 value={value}
                                 onChangeText={(value) => { onChange(value); setPassword(value); }}
                                 secureTextEntry
+                                returnKeyType="send"
+                                onSubmitEditing={handleSubmit(handleSignIn)}
+                                autoCapitalize="none"
                             />
                         )}
                     />
@@ -108,6 +112,7 @@ export function SignIn() {
                     <Button
                         title="Login"
                         onPress={handleSubmit(handleSignIn)}
+                        loading={loading}
                     />
                     <Register>
                         Não possui uma conta?

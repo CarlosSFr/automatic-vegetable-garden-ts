@@ -12,6 +12,7 @@ export const ImageContainer = styled.ImageBackground`
     width: 100%;
     height: 100%;
     position: absolute;
+    background-size: cover;
 `
 
 export const Title = styled.Text`

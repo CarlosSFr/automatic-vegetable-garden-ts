@@ -10,9 +10,10 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../../firebaseESP";
+import { FIREBASE_AUTH } from "../../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
+import { Loading } from "../../components/Loading";
 
 type FormDataProps = {
     name: string;
@@ -45,8 +46,9 @@ export function SignUp() {
             const response = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(response.user, { displayName: name });
             // console.log(response)
+            
             alert("Conta criada com sucesso!")
-            navigation.navigate("signIn")
+            
         } catch (error: any) {
             alert("Não foi possível criar sua conta: " + error.message)
         } finally {
@@ -109,6 +111,7 @@ export function SignUp() {
                                 onChangeText={(value) => { onChange(value); setPassword(value); }}
                                 value={value}
                                 secureTextEntry
+                                autoCapitalize="none"
                             />
                         )}
                     />
@@ -129,6 +132,7 @@ export function SignUp() {
                                 value={value}
                                 onSubmitEditing={handleSubmit(handleSignUp)}
                                 returnKeyType="send"
+                                autoCapitalize="none"
                                 secureTextEntry
                             />
                         )}
@@ -143,6 +147,7 @@ export function SignUp() {
                         <Button
                             title="Cadastrar"
                             onPress={handleSubmit(handleSignUp)}
+                            loading={loading}
                         />
                     </ButtonContainer>
                     <StyleContainer>
