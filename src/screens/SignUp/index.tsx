@@ -9,8 +9,10 @@ import { KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../firebaseESP";
+import { useNavigation } from "@react-navigation/native";
+import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 
 type FormDataProps = {
     name: string;
@@ -32,15 +34,19 @@ export function SignUp() {
     });
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState("")
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
+    const navigation = useNavigation<AuthNavigationRoutesProps>()
 
     async function handleSignUp() {
         setLoading(true)
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(response)
-            alert("Teste")
+            await updateProfile(response.user, { displayName: name });
+            // console.log(response)
+            alert("Conta criada com sucesso!")
+            navigation.navigate("signIn")
         } catch (error: any) {
             alert("Não foi possível criar sua conta: " + error.message)
         } finally {
@@ -65,7 +71,7 @@ export function SignUp() {
                         render={({ field: { onChange, value } }) => (
                             <Input
                                 placeholder="Seu nome"
-                                onChangeText={onChange}
+                                onChangeText={(value) => { onChange(value); setName(value); }}
                                 value={value}
                             />
                         )}
