@@ -5,15 +5,12 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { GoogleLogo } from "phosphor-react-native"
 import { Controller, useForm } from "react-hook-form"
-import { KeyboardAvoidingView, ScrollView, Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../firebase";
-import { useNavigation } from "@react-navigation/native";
-import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
-import { Loading } from "../../components/Loading";
 
 type FormDataProps = {
     name: string;
@@ -38,17 +35,14 @@ export function SignUp() {
     const [name, setName] = useState("")
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
-    const navigation = useNavigation<AuthNavigationRoutesProps>()
 
     async function handleSignUp() {
         setLoading(true)
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(response.user, { displayName: name });
-            // console.log(response)
             
             alert("Conta criada com sucesso!")
-            
         } catch (error: any) {
             alert("Não foi possível criar sua conta: " + error.message)
         } finally {

@@ -5,26 +5,30 @@ import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebase";
 import { Loading } from "../components/Loading";
+import { useUser } from "../hooks/useUser";
 
 
 export function Routes() {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
+    const UserData = useUser();
+
     useEffect(() => {
         onAuthStateChanged(FIREBASE_AUTH, (user) => {
-            console.log("user", user);
+            // console.log("user", user);
+            // if(user?.displayName === undefined){
+            //     return
+            // }
             setUser(user);
             setLoading(false);
         });
     }, [])
-
     if(loading){
         return (
             <Loading />
         )
     }
-
     return (
         <NavigationContainer>
             {user ?

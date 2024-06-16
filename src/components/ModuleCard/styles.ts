@@ -30,6 +30,8 @@ export const ModuleButton = styled.TouchableOpacity`
     width: 48%;
     padding: 8px;
     gap: 4px;
+
+    
 `
 export const ButtonText = styled.Text`
     font-size: ${props => props.theme.font_size.SSM}px;

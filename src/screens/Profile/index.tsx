@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
+import { FIREBASE_AUTH } from "../../../firebase";
 
 type FormProfileProps = {
     name: string;
@@ -87,7 +88,7 @@ export function Profile() {
                         name="name"
                         render={({ field: { onChange, value } }) => (
                             <Input
-                                placeholder="Nome do usuário"
+                                placeholder={String(FIREBASE_AUTH.currentUser?.displayName)}
                                 onChangeText={onChange}
                                 value={value}
                                 style={{ backgroundColor: theme.colors.off_white }}
@@ -102,7 +103,7 @@ export function Profile() {
                     )}
 
                     <Input
-                        placeholder="carlos.edfrei@gmail.com"
+                        placeholder={String(FIREBASE_AUTH.currentUser?.email)}
                         style={{ backgroundColor: theme.colors.gray_200 }}
                         placeholderColor={theme.colors.gray_300}
                         editable={false}

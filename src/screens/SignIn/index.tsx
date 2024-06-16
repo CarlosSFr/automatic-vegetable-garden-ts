@@ -2,7 +2,7 @@ import { Container, ForgotPass, ImageContainer, Register, Subtitle, Title } from
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { ActivityIndicator, KeyboardAvoidingView, ScrollView, Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 import { Controller, useForm } from "react-hook-form";
@@ -12,7 +12,6 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FIREBASE_AUTH } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { Loading } from "../../components/Loading";
 
 type FormSignInProps = {
     email: string;
@@ -38,7 +37,7 @@ export function SignIn() {
     async function handleSignIn() {
         setLoading(true)
         try {
-            const response = await signInWithEmailAndPassword(auth, email, password);
+           await signInWithEmailAndPassword(auth, email, password);
         } catch (error: any) {
             alert("Login falhou: " + error.message)
         } finally {

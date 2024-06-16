@@ -1,7 +1,7 @@
 import { Container, Logout, LogoutContainer, SensorBox, SensorText, ValueBox, ValueText } from "./styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { HomeHeader } from "../../components/HomeHeader";
-import { FlatList, TouchableOpacity } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { ImageContainer } from "../SignIn/styles";
 import { Button } from "../../components/Button";
 import { useEffect, useState } from "react";
@@ -19,6 +19,7 @@ export function Home() {
     const sensors = ["Temperatura", "Umidade", "Luminosidade", "pH"];
     const [temp, setTemp] = useState(0);
     const [humid, setHumid] = useState(0);
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const data = ref(db);
@@ -27,6 +28,7 @@ export function Home() {
             setTemp(snapshot.val().temp)
             setHumid(snapshot.val().humid)
         });
+        setLoading(false)
     }, [db])
 
     const sensorData = {
@@ -71,9 +73,16 @@ export function Home() {
                                         weight="bold"
                                         size={32}
                                     />
+                                    {
+                                        loading?
+                                    <ValueText>
+                                        <ActivityIndicator size="small" color={theme.colors.green_700}  />
+                                    </ValueText>
+                                    :
                                     <ValueText>
                                         {value}{unit}
                                     </ValueText>
+                                    }
                                 </ValueBox>
                             </SensorBox>
                         );

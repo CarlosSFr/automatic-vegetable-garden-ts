@@ -5,7 +5,6 @@ import bgImg from "./../../assets/bg-img-dark.png";
 import { Container, DataContainer } from "./styles";
 import {plants} from "./../../../data.json";
 import { FlatList } from "react-native";
-import cherryTom from "./../../assets/data/cherry-tomatoes.jpg"
 
 export function PlantData() {
 
