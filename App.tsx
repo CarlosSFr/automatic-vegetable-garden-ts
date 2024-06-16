@@ -4,6 +4,7 @@ import { RobotoCondensed_400Regular, RobotoCondensed_700Bold, useFonts } from "@
 import { Loading } from './src/components/Loading';
 import { Routes } from './src/routes';
 import { UserContextProvider } from './src/contexts/UserContext';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ RobotoCondensed_400Regular, RobotoCondensed_700Bold });
@@ -13,6 +14,7 @@ export default function App() {
       <UserContextProvider>
         {fontsLoaded ? <Routes /> : <Loading />}
       </UserContextProvider>
+      <Toast />
     </ThemeProvider>
   );
 }

@@ -12,6 +12,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FIREBASE_AUTH } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import Toast from "react-native-toast-message";
 
 type FormSignInProps = {
     email: string;
@@ -39,7 +40,15 @@ export function SignIn() {
         try {
            await signInWithEmailAndPassword(auth, email, password);
         } catch (error: any) {
-            alert("Login falhou: " + error.message)
+            if(error.message === "Firebase: Error (auth/invalid-credential)."){
+                Toast.show({
+                    type: "error",
+                    text1: "Erro!",
+                    text2: "E-mail ou senha inválido!",
+                    visibilityTime: 2000,
+                    position: "bottom"
+                });
+            }
         } finally {
             setLoading(false)
         }

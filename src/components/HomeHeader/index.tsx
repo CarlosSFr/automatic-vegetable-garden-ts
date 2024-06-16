@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
+import { updateCurrentUser, updateProfile } from "firebase/auth";
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
