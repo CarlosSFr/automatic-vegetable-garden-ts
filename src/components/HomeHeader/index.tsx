@@ -6,21 +6,13 @@ import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
-import { useEffect, useState } from "react";
-
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
-    const [userName, setUserName] = useState("")
 
     function handleGoToProfile() {
         navigation.navigate("profile")
     }
-
-    useEffect(() => {
-        setUserName(String(FIREBASE_AUTH.currentUser?.displayName))
-
-    }, [FIREBASE_AUTH.currentUser?.displayName])
 
     return (
         <Container>
@@ -40,7 +32,7 @@ export function HomeHeader() {
                         Olá,
                     </HelloText>
                     <UserName>
-                        {userName}
+                        {FIREBASE_AUTH.currentUser?.displayName}
                     </UserName>
                 </TextContainer>
             </View>

@@ -16,10 +16,9 @@ export function Routes() {
 
     useEffect(() => {
         onAuthStateChanged(FIREBASE_AUTH, (user) => {
-            // console.log("user", user);
-            // if(user?.displayName === undefined){
-            //     return
-            // }
+            if(user && user.displayName === null){
+                FIREBASE_AUTH.signOut();
+            }
             setUser(user);
             setLoading(false);
         });

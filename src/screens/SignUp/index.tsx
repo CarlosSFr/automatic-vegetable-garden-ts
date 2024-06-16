@@ -41,8 +41,9 @@ export function SignUp() {
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(response.user, { displayName: name });
-            
-            alert("Conta criada com sucesso!")
+
+            alert("Conta criada com sucesso!");
+
         } catch (error: any) {
             alert("Não foi possível criar sua conta: " + error.message)
         } finally {

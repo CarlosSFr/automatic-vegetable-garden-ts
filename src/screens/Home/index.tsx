@@ -90,7 +90,7 @@ export function Home() {
                 />
 
                 <Button
-                    title="Acessar dados"
+                    title="Cadastrar plantas"
                     type="DATA"
                     style={{ marginBottom: 60 }}
                     onPress={handleGoToPlantData}
