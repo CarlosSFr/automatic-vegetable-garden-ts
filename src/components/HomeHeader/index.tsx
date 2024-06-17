@@ -2,7 +2,7 @@ import { Container, HelloText, LogoContainer, TextContainer, UserName } from "./
 import { ProfilePic } from "../ProfilePic";
 import logo from "./../../assets/logo.png"
 import { TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
@@ -10,10 +10,15 @@ import defaultPic from "./../../assets/user.png"
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
+    const userName = String(FIREBASE_AUTH.currentUser?.displayName)
 
     function handleGoToProfile() {
         navigation.navigate("profile")
     }
+
+    // useFocusEffect(() => {
+        
+    // }, [userName])
 
     return (
         <Container>

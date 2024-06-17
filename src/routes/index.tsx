@@ -18,7 +18,7 @@ export function Routes() {
             if(user && user.displayName === null){
                 FIREBASE_AUTH.signOut();
             }
-            console.log(user)
+            // console.log(user)
             setUser(user);
             setLoading(false);
         });

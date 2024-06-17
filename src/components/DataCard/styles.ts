@@ -1,3 +1,4 @@
+import { Image } from "react-native";
 import styled from "styled-components/native";
 
 
@@ -31,7 +32,7 @@ export const AlignTextContainer = styled.View`
     
 `
 
-export const DataPic = styled.Image`
+export const DataPic = styled(Image)`
     border-radius: 6px;
     height: 40px;
     width: 40px;

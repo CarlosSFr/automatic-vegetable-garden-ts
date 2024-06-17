@@ -14,25 +14,43 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FIREBASE_AUTH } from "../../../firebase";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
+import Toast from "react-native-toast-message";
+import defaultPic from "./../../assets/user.png"
 
 type FormProfileProps = {
     name: string;
-    oldPassword: string;
-    password: string;
-    confirmPassword: string;
+    oldPassword?: string;
+    password?: string  | null | undefined;
+    confirmPassword?: string  | null | undefined;
 }
 
 const profileSchema = yup.object({
     name: yup.string().required("Informe o nome."),
-    oldPassword: yup.string().required("Informe a senha.").min(6, "A senha deve ter no mínimo 6 digitos."),
-    password: yup.string().required("Informe a senha.").min(6, "A senha deve ter no mínimo 6 digitos."),
-    confirmPassword: yup.string().required("Confirme a senha.").oneOf([yup.ref("password")], "A senha não confere.")
-})
+    password: yup.string()
+    .min(6, "A senha deve ter no mínimo 6 digitos.")
+    .nullable()
+    .transform((value) => !!value ? value : null),
+    confirmPassword: yup.string()
+    .oneOf([yup.ref("password")], "A senha não confere.")
+    .nullable()
+    .transform((value) => !!value ? value : null)
+    .when("password", {
+        is: (Field: any) => Field,
+        then: (schema) =>  schema.nullable()
+        .required("Informe a confirmação da senha")
+        .transform((value) => !!value ? value : null)
+    })
+});
 
 export function Profile() {
     const [userPhoto, setUserPhoto] = useState("https://github.com/CarlosSFr.png")
+    const [loading, setLoading] = useState(false)
     const { control, handleSubmit, formState: { errors } } = useForm<FormProfileProps>({
-        resolver: yupResolver(profileSchema)
+        resolver: yupResolver(profileSchema),
+        defaultValues: {
+            name: String(FIREBASE_AUTH.currentUser?.displayName)
+        }
     });
 
     async function handleUserPhotoSelect() {
@@ -59,8 +77,69 @@ export function Profile() {
 
     }
 
-    function handleChangeData(data: any) {
-        console.log(data)
+    async function handleProfileUpdate(data: FormProfileProps) {
+        const user = FIREBASE_AUTH.currentUser;
+
+        if (user && data.password) {
+            try {
+                setLoading(true);
+                // Reauthenticate user before updating password
+                const userEmail = user.email;
+                if (userEmail && data.oldPassword) {
+                    const credential = EmailAuthProvider.credential(userEmail, data.oldPassword);
+                    await reauthenticateWithCredential(user, credential);
+                } else {
+                    throw new Error('Senha antiga não informada');
+                }
+                // Update password and profile
+                await updatePassword(user, data.password);
+                await updateProfile(user, { displayName: data.name });
+                Toast.show({
+                    type: "success",
+                    text1: "Sucesso!",
+                    text2: "Senha e perfil atualizados com sucesso!",
+                    visibilityTime: 1500,
+                    position: "bottom"
+                });
+            } catch (error: any) {
+                if (error.code === 'auth/wrong-password') {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erro.",
+                        text2: "Senha antiga incorreta",
+                        visibilityTime: 1500,
+                        position: "bottom"
+                    });
+                } else if (error.code === 'auth/requires-recent-login') {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erro.",
+                        text2: "Reautenticação necessária. Faça login novamente.",
+                        visibilityTime: 1500,
+                        position: "bottom"
+                    });
+                }
+                else if (error.code === 'auth/invalid-credential') {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erro.",
+                        text2: "Senha antiga incorreta.",
+                        visibilityTime: 1500,
+                        position: "bottom"
+                    });
+                } else {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erro.",
+                        text2: "Não foi possível atualizar a senha",
+                        visibilityTime: 1500,
+                        position: "bottom"
+                    });
+                } 
+            } finally {
+                setLoading(false);
+            }
+        }
     }
 
     return (
@@ -74,7 +153,11 @@ export function Profile() {
                 <Container>
                     <ProfilePic
                         size={148}
-                        source={{ uri: userPhoto }}
+                        source={ 
+                            FIREBASE_AUTH.currentUser?.photoURL? 
+                            {uri: FIREBASE_AUTH.currentUser?.photoURL }
+                            : defaultPic
+                        }
                     />
 
                     <TouchableOpacity onPress={handleUserPhotoSelect}>
@@ -88,7 +171,7 @@ export function Profile() {
                         name="name"
                         render={({ field: { onChange, value } }) => (
                             <Input
-                                placeholder={String(FIREBASE_AUTH.currentUser?.displayName)}
+                                placeholder="Nome"
                                 onChangeText={onChange}
                                 value={value}
                                 style={{ backgroundColor: theme.colors.off_white }}
@@ -125,11 +208,6 @@ export function Profile() {
                             />
                         )}
                     />
-                    {errors.oldPassword && (
-                        <Text style={{ color: "red", marginTop: 5, marginBottom: -5, fontWeight: "bold" }}>
-                            {errors.oldPassword.message}
-                        </Text>
-                    )}
 
                     <Controller
                         control={control}
@@ -138,7 +216,6 @@ export function Profile() {
                             <Input
                                 placeholder="Nova senha"
                                 onChangeText={onChange}
-                                value={value}
                                 secureTextEntry
                             />
                         )}
@@ -156,8 +233,9 @@ export function Profile() {
                             <Input
                                 placeholder="Confirme a nova senha"
                                 onChangeText={onChange}
-                                value={value}
                                 secureTextEntry
+                                returnKeyType="send"
+                                onSubmitEditing={handleSubmit(handleProfileUpdate)}
                             />
                         )}
                     />
@@ -166,11 +244,11 @@ export function Profile() {
                             {errors.confirmPassword.message}
                         </Text>
                     )}
-
                     <Button
                         title="Alterar"
                         style={{ marginTop: 30 }}
-                        onPress={handleSubmit(handleChangeData)}
+                        onPress={handleSubmit(handleProfileUpdate)}
+                        loading={loading}
                     />
                 </ContainerLeft>
             </ScrollView>

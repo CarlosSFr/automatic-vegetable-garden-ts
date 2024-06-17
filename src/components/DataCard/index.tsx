@@ -4,20 +4,19 @@ import { ImageProps, TouchableOpacity } from "react-native";
 import theme from "../../theme";
 
 type Props = ImageProps & {
-    adress: string,
+    adress?: string,
     title: string,
     description: string,
 }
 
 export function DataCard({ adress, title, description, ...rest }: Props) {
+
     return (
-        <DataCardContainer>
+        <DataCardContainer> 
             <LeftContainer>
                 <DataPic
                     {...rest}
-                    source={{uri: adress}}
-                    width={40}
-                    height={40}
+                    source={{ uri: adress}}
                 />
                 <AlignTextContainer>
                     <DataTitle>

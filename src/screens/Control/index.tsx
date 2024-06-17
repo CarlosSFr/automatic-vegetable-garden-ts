@@ -6,6 +6,7 @@ import { CaretCircleDown } from "phosphor-react-native";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
+import {  } from "react-native"
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 export function Control() {
