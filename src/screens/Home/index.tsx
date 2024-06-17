@@ -89,12 +89,12 @@ export function Home() {
                     }}
                 />
 
-                <Button
+                {/* <Button
                     title="Cadastrar plantas"
                     type="DATA"
                     style={{ marginBottom: 60 }}
                     onPress={handleGoToPlantData}
-                />
+                /> */}
 
                 <LogoutContainer>
                     <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()}>

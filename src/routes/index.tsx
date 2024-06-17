@@ -18,11 +18,12 @@ export function Routes() {
             if(user && user.displayName === null){
                 FIREBASE_AUTH.signOut();
             }
+            console.log(user)
             setUser(user);
             setLoading(false);
         });
     }, [])
-    if(loading){
+    if(loading || user?.displayName === null){
         return (
             <Loading />
         )

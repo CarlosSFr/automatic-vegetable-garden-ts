@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
-import { updateCurrentUser, updateProfile } from "firebase/auth";
+import defaultPic from "./../../assets/user.png"
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
@@ -24,7 +24,11 @@ export function HomeHeader() {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity onPress={handleGoToProfile} >
                     <ProfilePic
-                        source={{ uri: "https://github.com/CarlosSFr.png" }}
+                        source={ 
+                                    FIREBASE_AUTH.currentUser?.photoURL? 
+                                    {uri: FIREBASE_AUTH.currentUser?.photoURL }
+                                    : defaultPic
+                                }
                         size={60}
                     />
                 </TouchableOpacity>
