@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { UserContext } from "../contexts/UserContext";
+import { CyclesContext } from "../contexts/CyclesContext";
 
 
-export function useUser(){
-    const context = useContext(UserContext);
-    
+export function useUser() {
+    const context = useContext(CyclesContext);
+
     return context;
 }

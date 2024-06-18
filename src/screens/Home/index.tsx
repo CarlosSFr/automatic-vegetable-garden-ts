@@ -79,15 +79,13 @@ export function Home() {
                 </footer>
             </body>
         </html>
-
     `
 
-    async function generatePdf(){
+    async function generatePdf() {
         const file = await printToFileAsync({
             html: html,
             base64: false
         });
-
         await shareAsync(file.uri);
     }
 
@@ -116,14 +114,14 @@ export function Home() {
                                         size={32}
                                     />
                                     {
-                                        loading?
-                                    <ValueText>
-                                        <ActivityIndicator size="small" color={theme.colors.green_700}  />
-                                    </ValueText>
-                                    :
-                                    <ValueText>
-                                        {value}{unit}
-                                    </ValueText>
+                                        loading ?
+                                            <ValueText>
+                                                <ActivityIndicator size="small" color={theme.colors.green_700} />
+                                            </ValueText>
+                                            :
+                                            <ValueText>
+                                                {value}{unit}
+                                            </ValueText>
                                     }
                                 </ValueBox>
                             </SensorBox>

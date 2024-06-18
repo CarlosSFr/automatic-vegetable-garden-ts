@@ -34,55 +34,55 @@
             "id": "5",
             "title": "Alface",
             "irrigationTime": "48h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "alface.jpg"
         },
         {
             "id": "6",
             "title": "Cenoura",
             "irrigationTime": "96h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "cenoura.jpg"
         },
         {
             "id": "7",
             "title": "Rúcula",
             "irrigationTime": "48h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "rucula.jpg"
         },
         {
             "id": "8",
             "title": "Cebolinha",
             "irrigationTime": "96h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "cebolinha.jpg"
         },
         {
             "id": "9",
             "title": "Manjericão",
             "irrigationTime": "48h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "manjericao.jpg"
         },
         {
             "id": "10",
             "title": "Coentro",
             "irrigationTime": "72h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "coentro.jpg"
         },
         {
             "id": "11",
             "title": "Pimentão",
             "irrigationTime": "72h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "pimentao.jpg"
         },
         {
             "id": "12",
             "title": "Rabanete",
             "irrigationTime": "72h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "rabanete.jpg"
         },
         {
             "id": "13",
             "title": "Espinafre",
             "irrigationTime": "72h",
-            "photo": "cherry-tomatoes.jpg"
+            "photo": "espinafre.jpg"
         },
         {
             "id": "14",
