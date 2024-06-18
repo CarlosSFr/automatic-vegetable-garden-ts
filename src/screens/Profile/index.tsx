@@ -9,38 +9,39 @@ import theme from "../../theme";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
 import * as FileSystem from "expo-file-system"
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FIREBASE_AUTH, uploadProfilePic } from "../../../firebase";
-import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
+import { EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import defaultPic from "./../../assets/user.png"
+import { useFocusEffect } from "@react-navigation/native";
 
 type FormProfileProps = {
     name: string;
     oldPassword?: string;
-    password?: string  | null | undefined;
-    confirmPassword?: string  | null | undefined;
+    password?: string | null | undefined;
+    confirmPassword?: string | null | undefined;
 }
 
 const profileSchema = yup.object({
     name: yup.string().required("Informe o nome."),
     password: yup.string()
-    .min(6, "A senha deve ter no mínimo 6 digitos.")
-    .nullable()
-    .transform((value) => !!value ? value : null),
+        .min(6, "A senha deve ter no mínimo 6 digitos.")
+        .nullable()
+        .transform((value) => !!value ? value : null),
     confirmPassword: yup.string()
-    .oneOf([yup.ref("password")], "A senha não confere.")
-    .nullable()
-    .transform((value) => !!value ? value : null)
-    .when("password", {
-        is: (Field: any) => Field,
-        then: (schema) =>  schema.nullable()
-        .required("Informe a confirmação da senha")
+        .oneOf([yup.ref("password")], "A senha não confere.")
+        .nullable()
         .transform((value) => !!value ? value : null)
-    })
+        .when("password", {
+            is: (Field: any) => Field,
+            then: (schema) => schema.nullable()
+                .required("Informe a confirmação da senha")
+                .transform((value) => !!value ? value : null)
+        })
 });
 
 export function Profile() {
@@ -73,12 +74,12 @@ export function Profile() {
             }
 
             setUserPhoto(photoSelected.assets[0].uri);
-        
-        const user = FIREBASE_AUTH.currentUser;
 
-        uploadProfilePic(userPhoto, user)
+            const user = FIREBASE_AUTH.currentUser;
 
-        }  
+            await uploadProfilePic(photoSelected.assets[0].uri, user);
+
+        }
     }
 
     async function handleProfileUpdate(data: FormProfileProps) {
@@ -139,13 +140,20 @@ export function Profile() {
                         visibilityTime: 1500,
                         position: "bottom"
                     });
-                } 
+                }
             } finally {
                 setLoading(false);
             }
         }
         // reset()
     }
+
+    useEffect(() => {
+        const userPic = FIREBASE_AUTH.currentUser?.photoURL;
+        if (userPic) {
+            setUserPhoto(userPic)
+        }
+    }, [])
 
     return (
         <ImageContainer
@@ -158,10 +166,10 @@ export function Profile() {
                 <Container>
                     <ProfilePic
                         size={148}
-                        source={ 
-                            FIREBASE_AUTH.currentUser?.photoURL? 
-                            {uri: FIREBASE_AUTH.currentUser?.photoURL }
-                            : defaultPic
+                        source={
+                            userPhoto ?
+                                { uri: userPhoto }
+                                : defaultPic
                         }
                     />
 

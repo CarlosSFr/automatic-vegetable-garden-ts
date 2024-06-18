@@ -1,12 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { initializeAuth } from "firebase/auth"
+import { initializeAuth, updateProfile, } from "firebase/auth"
 import { getReactNativePersistence } from "firebase/auth"
-import { getStorage, uploadBytes } from "firebase/storage"
+import { getMetadata, getStorage, uploadBytes, getDownloadURL } from "firebase/storage"
+import { ref as sRef } from 'firebase/storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import "firebase/database"
-
 
 const firebaseConfig = {
     apiKey: "AIzaSyDXcJgq_AMT5vlylZS2_rliSZ1r9xT18xw",
@@ -27,8 +27,18 @@ export const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
 });
 export { db, ref, onValue };
 
-export async function uploadProfilePic(file, currentUser){
-    const fileRef = ref(storage, currentUser.uid + "png");
-    const snapshot = await uploadBytes(fileRef, file);
+export async function uploadProfilePic(uri, currentUser) {
+    const fileRef = sRef(storage, currentUser.uid + ".jpg");
 
+    const fetchResponse = await fetch(uri);
+
+    const fileBlob = await fetchResponse.blob()
+
+    const snapshot = await uploadBytes(fileRef, fileBlob);
+
+    // const metadata = await getMetadata(fileRef)
+
+    const url = await getDownloadURL(fileRef)
+
+    await updateProfile(currentUser, { photoURL: url })
 }
