@@ -13,22 +13,27 @@ import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 import { FIREBASE_AUTH } from "../../../firebase";
 import { db, ref, onValue } from "../../../firebase"
-import { useUser } from "../../hooks/useUser";
+
+import { printToFileAsync } from "expo-print"
+import { shareAsync } from "expo-sharing"
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
     const sensors = ["Temperatura", "Umidade", "Luminosidade", "pH"];
     const [temp, setTemp] = useState(0);
     const [humid, setHumid] = useState(0);
+    const [user, setUser] = useState(FIREBASE_AUTH.currentUser)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const data = ref(db);
+        const user = FIREBASE_AUTH.currentUser;
 
         onValue(data, (snapshot) => {
             setTemp(snapshot.val().temp)
             setHumid(snapshot.val().humid)
         });
+        setUser(user)
         setLoading(false)
     }, [db])
 
@@ -36,7 +41,7 @@ export function Home() {
         "Temperatura": { value: temp, unit: "°C" },
         "Umidade": { value: humid, unit: "%" },
         "Luminosidade": { value: "80", unit: "" },
-        "pH": { value: "7.6", unit: "" }
+        "pH": { value: "6.6", unit: "" }
     };
 
     const iconMapping = {
@@ -46,8 +51,44 @@ export function Home() {
         "pH": Flask
     };
 
-    function handleGoToPlantData() {
-        navigation.navigate("plantData");
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    });
+
+    const html = `
+        <html>
+            <body style="padding: 30px">
+                <h1 style="font-weight: bold" >Relatório de usuário: ${user?.displayName}</h1>
+                <br>
+                <p style="font-weight: bold">Informações sobre o usuário:</p>
+                <p><strong>Email:</strong> ${user?.email}</p>
+                <p><strong>URL da foto no Firebase:</strong> ${user?.photoURL}</p>
+                <p><strong>Uid do usuário:</strong> ${user?.uid}</p>
+                <br>
+                <p style="font-weight: bold">Dados dos sensores ao gerar relatório</p>
+                <p><strong>Temperatura:</strong> ${temp}ºC</p>
+                <p><strong>Umidade:</strong> ${humid}%</p>
+                <p><strong>Luminosidade:</strong> 80</p>
+                <p><strong>Umidade:</strong> 6.6</p>
+                <br>
+                <footer>
+                <p>Curitiba, ${formattedDate}</p>
+                </footer>
+            </body>
+        </html>
+
+    `
+
+    async function generatePdf(){
+        const file = await printToFileAsync({
+            html: html,
+            base64: false
+        });
+
+        await shareAsync(file.uri);
     }
 
     return (
@@ -90,12 +131,11 @@ export function Home() {
                     }}
                 />
 
-                {/* <Button
-                    title="Cadastrar plantas"
-                    type="DATA"
+                <Button
+                    title="Gerar relatório de usuário"
                     style={{ marginBottom: 60 }}
-                    onPress={handleGoToPlantData}
-                /> */}
+                    onPress={generatePdf}
+                />
 
                 <LogoutContainer>
                     <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()}>

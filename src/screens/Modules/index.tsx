@@ -14,13 +14,13 @@ export function Modules() {
             />
             <ModuleCardContainer>
                 <ModuleCard
-                    title="Módulo 1"
+                    title="Plantação 1"
                 />
                 <ModuleCard
-                    title="Módulo 2"
+                    title="Plantação 2"
                 />
                 <ModuleCard
-                    title="Módulo 3"
+                    title="Plantação 3"
                 />
             </ModuleCardContainer>
         </ImageContainer>
