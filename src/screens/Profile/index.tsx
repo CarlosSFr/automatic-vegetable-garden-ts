@@ -13,7 +13,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
-import { FIREBASE_AUTH } from "../../../firebase";
+import { FIREBASE_AUTH, uploadProfilePic } from "../../../firebase";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import defaultPic from "./../../assets/user.png"
@@ -44,9 +44,9 @@ const profileSchema = yup.object({
 });
 
 export function Profile() {
-    const [userPhoto, setUserPhoto] = useState("https://github.com/CarlosSFr.png")
+    const [userPhoto, setUserPhoto] = useState("")
     const [loading, setLoading] = useState(false)
-    const { control, handleSubmit, formState: { errors } } = useForm<FormProfileProps>({
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<FormProfileProps>({
         resolver: yupResolver(profileSchema),
         defaultValues: {
             name: String(FIREBASE_AUTH.currentUser?.displayName)
@@ -73,8 +73,12 @@ export function Profile() {
             }
 
             setUserPhoto(photoSelected.assets[0].uri);
-        }
+        
+        const user = FIREBASE_AUTH.currentUser;
 
+        uploadProfilePic(userPhoto, user)
+
+        }  
     }
 
     async function handleProfileUpdate(data: FormProfileProps) {
@@ -140,6 +144,7 @@ export function Profile() {
                 setLoading(false);
             }
         }
+        // reset()
     }
 
     return (
@@ -212,7 +217,7 @@ export function Profile() {
                     <Controller
                         control={control}
                         name="password"
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Nova senha"
                                 onChangeText={onChange}
@@ -229,7 +234,7 @@ export function Profile() {
                     <Controller
                         control={control}
                         name="confirmPassword"
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Confirme a nova senha"
                                 onChangeText={onChange}

@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { initializeAuth } from "firebase/auth"
 import { getReactNativePersistence } from "firebase/auth"
+import { getStorage, uploadBytes } from "firebase/storage"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import "firebase/database"
@@ -19,8 +20,15 @@ const firebaseConfig = {
 
 //Initialize firebase
 const FIREBASE_APP = initializeApp(firebaseConfig);
+const storage = getStorage();
 const db = getDatabase(FIREBASE_APP);
 export const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
     persistence: getReactNativePersistence(AsyncStorage)
 });
 export { db, ref, onValue };
+
+export async function uploadProfilePic(file, currentUser){
+    const fileRef = ref(storage, currentUser.uid + "png");
+    const snapshot = await uploadBytes(fileRef, file);
+
+}

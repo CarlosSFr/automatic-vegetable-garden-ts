@@ -7,18 +7,24 @@ import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
 import defaultPic from "./../../assets/user.png"
+import { useCallback, useState } from "react";
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
-    const userName = String(FIREBASE_AUTH.currentUser?.displayName)
+    const [userName, setUserName] = useState(FIREBASE_AUTH.currentUser?.displayName || '');
 
     function handleGoToProfile() {
         navigation.navigate("profile")
     }
 
-    // useFocusEffect(() => {
-        
-    // }, [userName])
+    useFocusEffect(
+        useCallback(() => {
+            const user = FIREBASE_AUTH.currentUser;
+            if (user) {
+                setUserName(user.displayName || '');
+            }
+        }, [])
+    );
 
     return (
         <Container>
