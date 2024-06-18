@@ -1,6 +1,8 @@
 import { TouchableOpacity } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import { DropdownProps } from "react-native-element-dropdown/lib/typescript/components/Dropdown/model";
 import styled from "styled-components/native";
-
+import { DropProps } from ".";
 
 export const Container = styled.View`
     flex: 1;
@@ -42,4 +44,29 @@ export const Timer = styled.Text`
     width: 100%;
     text-align: center;
     margin-bottom: 150px;
+`
+
+export const DropdownButton = styled(Dropdown).attrs<DropdownProps<DropProps>>(props => ({
+    placeholderStyle: {
+        color: props.theme.colors.gray_200,
+        fontFamily: props.theme.font_family.regular,
+        fontSize: props.theme.font_size.MD,
+    },
+    selectedTextStyle: {
+        color: props.theme.colors.gray_200,
+        fontFamily: props.theme.font_family.regular,
+        fontSize: props.theme.font_size.MD,
+    },
+    itemTextStyle: {
+        color: props.theme.colors.gray_400,
+        fontFamily: props.theme.font_family.regular,
+        fontSize: props.theme.font_size.MD,
+    },
+}))`
+    height: 36px;
+    border-color: ${props => props.theme.colors.gray_400};
+    background-color: ${props => props.theme.colors.gray_400};
+    border-width: 0.5px;
+    border-radius: 8px;
+    padding: 0px 8px;
 `

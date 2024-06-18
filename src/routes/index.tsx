@@ -11,8 +11,6 @@ export function Routes() {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
-    const UserData = useUser();
-
     useEffect(() => {
         onAuthStateChanged(FIREBASE_AUTH, (user) => {
             if(user && user.displayName === null){

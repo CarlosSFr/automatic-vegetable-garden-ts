@@ -36,8 +36,6 @@ export async function uploadProfilePic(uri, currentUser) {
 
     const snapshot = await uploadBytes(fileRef, fileBlob);
 
-    // const metadata = await getMetadata(fileRef)
-
     const url = await getDownloadURL(fileRef)
 
     await updateProfile(currentUser, { photoURL: url })

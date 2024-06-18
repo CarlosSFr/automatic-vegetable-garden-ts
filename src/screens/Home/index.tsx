@@ -13,6 +13,7 @@ import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 import { FIREBASE_AUTH } from "../../../firebase";
 import { db, ref, onValue } from "../../../firebase"
+import { useUser } from "../../hooks/useUser";
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();

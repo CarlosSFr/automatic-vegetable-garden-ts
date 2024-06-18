@@ -1,34 +1,31 @@
 import { Container, HelloText, LogoContainer, TextContainer, UserName } from "./styles";
 import { ProfilePic } from "../ProfilePic";
 import logo from "./../../assets/logo.png"
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
 import defaultPic from "./../../assets/user.png"
-import { useCallback, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { useCallback, useState } from "react";
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
     const [userName, setUserName] = useState(FIREBASE_AUTH.currentUser?.displayName || '');
     const [userPhoto, setUserPhoto] = useState(FIREBASE_AUTH.currentUser?.photoURL)
-    const [loading, setLoading] = useState(true)
 
     function handleGoToProfile() {
         navigation.navigate("profile")
     }
 
     useFocusEffect(
-        useCallback(() => {
+        useCallback(() => {   
             const user = FIREBASE_AUTH.currentUser;
             if (user) {
                 setUserName(user.displayName || '');
-                setUserPhoto(user.photoURL);
+                setTimeout(() => setUserPhoto(user.photoURL), 2500)
             }
-            setLoading(false);
-        }, [])
+        }, [userPhoto])
     );
 
     return (
@@ -53,7 +50,7 @@ export function HomeHeader() {
                         Olá,
                     </HelloText>
                     <UserName>
-                        {FIREBASE_AUTH.currentUser?.displayName}
+                        {userName}
                     </UserName>
                 </TextContainer>
             </View>
