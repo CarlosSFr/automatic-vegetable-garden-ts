@@ -1,8 +1,7 @@
 import bgImg from "./../../assets/bg-img-dark.png"
 import { ImageContainer } from "../SignIn/styles";
 import { TextHeader } from "../../components/TextHeader";
-import { Container, DropdownButton, IrrigationText, ModuleConfig, ModuleText, Timer } from "./styles";
-import { CaretCircleDown } from "phosphor-react-native";
+import { Container, DropdownButton, IrrigationText, Timer } from "./styles";
 import theme from "../../theme";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -14,11 +13,11 @@ export type DropProps = {
     value: string;
 }
 
-const data: DropProps[] =  [
+const data: DropProps[] = [
     { label: 'Plantação 1', value: '1' },
     { label: 'Plantação 2', value: '2' },
     { label: 'Plantação 3', value: '3' },
-  ];
+];
 
 //   type ControlProps = DropdownProps<typeof data>
 
@@ -41,7 +40,7 @@ export function Control() {
             />
             <Container>
                 <DropdownButton
-                    style={[isFocus && {borderColor: theme.colors.green_700}]} 
+                    style={[isFocus && { borderColor: theme.colors.green_700 }]}
                     data={data}
                     value={value}
                     labelField="label"
@@ -52,7 +51,7 @@ export function Control() {
                     onChange={(item: DropProps) => {
                         setValue(item.value);
                         setIsFocus(false);
-                      }}
+                    }}
                 />
                 <IrrigationText>
                     Próxima irrigação

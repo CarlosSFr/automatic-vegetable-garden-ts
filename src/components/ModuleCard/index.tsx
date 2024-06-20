@@ -14,22 +14,21 @@ export function ModuleCard({ title }: Props) {
     const [disabled, setDisabled] = useState(false)
     const navigation = useNavigation<AppNavigationRoutesProps>()
 
-    function handleUserPermission(){
+    function handleUserPermission() {
         navigation.navigate("plantData")
     }
-
 
     useEffect(() => {
         const user = FIREBASE_AUTH.currentUser;
         if (user && user.email !== "carlos@email.com") {
             setDisabled(true);
-                Toast.show({
-                    type: "error",
-                    text1: "Banco de dados bloqueado.",
-                    text2: "Função para usuário premium!",
-                    visibilityTime: 2000,
-                    position: "bottom"
-                });
+            Toast.show({
+                type: "error",
+                text1: "Banco de dados bloqueado.",
+                text2: "Função para usuário premium!",
+                visibilityTime: 2000,
+                position: "bottom"
+            });
         }
     }, []);
 

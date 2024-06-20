@@ -9,15 +9,14 @@ import theme from "../../theme";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
 import * as FileSystem from "expo-file-system"
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FIREBASE_AUTH, uploadProfilePic } from "../../../firebase";
-import { EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import defaultPic from "./../../assets/user.png"
-import { useFocusEffect } from "@react-navigation/native";
 
 type FormProfileProps = {
     name: string;
@@ -47,7 +46,7 @@ const profileSchema = yup.object({
 export function Profile() {
     const [userPhoto, setUserPhoto] = useState("")
     const [loading, setLoading] = useState(false)
-    const { control, handleSubmit, reset, formState: { errors } } = useForm<FormProfileProps>({
+    const { control, handleSubmit, formState: { errors } } = useForm<FormProfileProps>({
         resolver: yupResolver(profileSchema),
         defaultValues: {
             name: String(FIREBASE_AUTH.currentUser?.displayName)
