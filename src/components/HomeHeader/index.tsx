@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { FIREBASE_AUTH } from "../../../firebase";
 import defaultPic from "./../../assets/user.png"
 import { useCallback, useState } from "react";
+import { SignOut } from "phosphor-react-native"
 
 export function HomeHeader() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
@@ -19,7 +20,7 @@ export function HomeHeader() {
     }
 
     useFocusEffect(
-        useCallback(() => {   
+        useCallback(() => {
             const user = FIREBASE_AUTH.currentUser;
             if (user) {
                 setUserName(user.displayName || '');
@@ -54,9 +55,18 @@ export function HomeHeader() {
                     </UserName>
                 </TextContainer>
             </View>
-            <LogoContainer
+            {/* <LogoContainer
                 source={logo}
-            />
+            /> */}
+            <TouchableOpacity
+                onPress={() => FIREBASE_AUTH.signOut()}
+            >
+                <SignOut
+                    color="#B21523"
+                    size={32}
+                    weight="bold"
+                />
+            </TouchableOpacity>
         </Container>
     )
 }

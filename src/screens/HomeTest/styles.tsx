@@ -1,24 +1,11 @@
 import styled from "styled-components/native";
 
-export const ImageContainer = styled.ImageBackground`
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background-size: cover;
-`
-
 export const Container = styled.View`
     flex: 1;
     align-items: center;
-    padding: 0px 30px 0px 30px;
+    padding: 16px 30px 30px 30px;
     background-color: "green";
 `
-
-export const SensorsTest = styled.View`
-    flex: 1;
-`
-
 export const SensorBox = styled.View`
     width: 48%;
     height: 140px;
@@ -65,20 +52,15 @@ export const ListTitleBox = styled.View`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    margin-top: 16px;
 `
 
 export const ListLeftContainer = styled.View`
     flex: 1;
 `
 
-export const LightContainer = styled.View`
-    position: absolute;
-    padding: 0px 30px;
-    margin-top: 16px;
-    width: 100%;
+export const ListRightContainer = styled.View`
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
     gap: 6px;
 `

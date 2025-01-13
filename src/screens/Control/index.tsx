@@ -7,6 +7,8 @@ import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { useState } from "react";
+import { db, ref, onValue } from "../../../firebase";
+import { set } from "firebase/database";
 
 export type DropProps = {
     label: string;
@@ -24,11 +26,20 @@ const data: DropProps[] = [
 export function Control() {
     const navigation = useNavigation<AppNavigationRoutesProps>()
 
+    const [status, setStatus] = useState(0)
     const [value, setValue] = useState("");
     const [isFocus, setIsFocus] = useState(false);
 
     function handleGoToConfig() {
         navigation.navigate("modules");
+    }
+
+    function switchLed() {
+        var ledRef = ref(db, '/led');
+        onValue(ref(db), (snapshot) => {
+            setStatus(snapshot.val().led);
+        })
+        status === 0 ? set(ledRef, 1) : set(ledRef, 0);
     }
 
     return (
@@ -64,6 +75,7 @@ export function Control() {
                     title="Regar plantas"
                     type="PLAY"
                     style={{ marginBottom: 14 }}
+                    onPress={switchLed}
                 />
                 <Button
                     title="Configurar plantações"

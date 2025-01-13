@@ -2,7 +2,7 @@ import { createBottomTabNavigator, BottomTabNavigationProp } from "@react-naviga
 import { Home } from "../screens/Home";
 import { Profile } from "../screens/Profile";
 import { PlantData } from "../screens/PlantData";
-import { Control } from "../screens/Control";
+import { HomeTest } from "../screens/HomeTest"
 import { History } from "../screens/History";
 import { Modules } from "../screens/Modules";
 import { Platform } from "react-native";
@@ -11,7 +11,7 @@ import { useTheme } from "styled-components/native";
 
 import HomeSvg from "./../assets/Home.svg"
 import HistorySvg from "./../assets/History.svg"
-import PlaySvg from "./../assets/Play.svg"
+import Config from "./../assets/Config.svg"
 
 type AppRoutes = {
     home: undefined;
@@ -72,7 +72,13 @@ export function AppRoutes() {
                 name="modules"
                 component={Modules}
                 options={{
-                    tabBarButton: () => null,
+                    tabBarIcon: ({ color }) => (
+                        <Config
+                            fill={color}
+                            width={32}
+                            height={32}
+                        />
+                    )
                 }}
             />
 
@@ -81,20 +87,6 @@ export function AppRoutes() {
                 component={PlantData}
                 options={{
                     tabBarButton: () => null,
-                }}
-            />
-
-            <Screen
-                name="control"
-                component={Control}
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <PlaySvg
-                            fill={color}
-                            width={32}
-                            height={32}
-                        />
-                    )
                 }}
             />
 

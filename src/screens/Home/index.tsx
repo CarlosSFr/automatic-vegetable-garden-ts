@@ -1,37 +1,65 @@
-import { Container, Logout, LogoutContainer, SensorBox, SensorText, ValueBox, ValueText } from "./styles";
+import { Container, LightContainer, ListLeftContainer, ListTitleBox, Logout, LogoutContainer, PlantText, SensorBox, SensorText, SunLightText, ValueBox, ValueText } from "./styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { HomeHeader } from "../../components/HomeHeader";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
-import { ImageContainer } from "../SignIn/styles";
+import { ActivityIndicator, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { ImageContainer } from "./styles";
 import { Button } from "../../components/Button";
 import { useEffect, useState } from "react";
-import { Thermometer, DropHalf, Flask, SunDim } from "phosphor-react-native";
+import { Thermometer, DropHalf, SunDim, Waves, LightbulbFilament } from "phosphor-react-native";
 import theme from "../../theme";
 
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 import { FIREBASE_AUTH } from "../../../firebase";
-import { db, ref, onValue } from "../../../firebase"
-
-import { printToFileAsync } from "expo-print"
-import { shareAsync } from "expo-sharing"
+import { db, ref, onValue, storage } from "../../../firebase"
+import { getDownloadURL, ref as sRef } from 'firebase/storage';
+import { set } from "firebase/database";
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
-    const sensors = ["Temperatura", "Umidade", "Luminosidade", "pH"];
+    const sensors = ["Temperatura", "Umidade", "Nível do Tanque", "Temperatura Solo"];
     const [temp, setTemp] = useState(0);
     const [humid, setHumid] = useState(0);
+    const [tanklevel, setTankLevel] = useState(0);
+    const [tempsoil, setTempSoil] = useState(0);
     const [user, setUser] = useState(FIREBASE_AUTH.currentUser)
     const [loading, setLoading] = useState(true)
+    // const [status, setStatus] = useState(0)
+    const [lightSensor, setlightSensor] = useState(0)
 
     useEffect(() => {
         const data = ref(db);
         const user = FIREBASE_AUTH.currentUser;
 
+        const fetchData = async () => {
+            try {
+                // Referência ao arquivo JSON no Firebase Storage
+                const reference = sRef(storage, "PlantData/data.json")
+
+                // Baixar o arquivo JSON como string
+                const url = await getDownloadURL(reference);
+
+                // Buscar o arquivo via URL e transformá-lo em JSON
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Exibindo o conteúdo do arquivo JSON no console
+                console.log(data);
+
+                // Acessando um exemplo específico (como o título das plantas)
+            } catch (error) {
+                console.error('Erro ao acessar o arquivo JSON:', error);
+            }
+        };
+
+        fetchData();
+
         onValue(data, (snapshot) => {
             setTemp(snapshot.val().temp)
             setHumid(snapshot.val().humid)
+            setTankLevel(snapshot.val().tanklevel)
+            setTempSoil(snapshot.val().tempsoil)
         });
         setUser(user)
         setLoading(false)
@@ -40,109 +68,123 @@ export function Home() {
     const sensorData = {
         "Temperatura": { value: temp, unit: "°C" },
         "Umidade": { value: humid, unit: "%" },
-        "Luminosidade": { value: "80", unit: "" },
-        "pH": { value: "6.6", unit: "" }
+        "Nível do Tanque": { value: tanklevel, unit: "%" },
+        "Temperatura Solo": { value: tempsoil, unit: "°C" }
     };
 
     const iconMapping = {
         "Temperatura": Thermometer,
         "Umidade": DropHalf,
-        "Luminosidade": SunDim,
-        "pH": Flask
+        "Nível do Tanque": Waves,
+        "Temperatura Solo": Thermometer
     };
 
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    });
-
-    const html = `
-        <html>
-            <body style="padding: 30px">
-                <h1 style="font-weight: bold" >Relatório de usuário: ${user?.displayName}</h1>
-                <br>
-                <p style="font-weight: bold">Informações sobre o usuário:</p>
-                <p><strong>Email:</strong> ${user?.email}</p>
-                <p><strong>URL da foto no Firebase:</strong> ${user?.photoURL}</p>
-                <p><strong>Uid do usuário:</strong> ${user?.uid}</p>
-                <br>
-                <p style="font-weight: bold">Dados dos sensores ao gerar relatório</p>
-                <p><strong>Temperatura:</strong> ${temp}ºC</p>
-                <p><strong>Umidade:</strong> ${humid}%</p>
-                <p><strong>Luminosidade:</strong> 80</p>
-                <p><strong>Umidade:</strong> 6.6</p>
-                <br>
-                <footer>
-                <p>Curitiba, ${formattedDate}</p>
-                </footer>
-            </body>
-        </html>
-    `
-
-    async function generatePdf() {
-        const file = await printToFileAsync({
-            html: html,
-            base64: false
-        });
-        await shareAsync(file.uri);
+    function switchLed(ledKey: string) {
+        const ledRef = ref(db, `/${ledKey}`); // Caminho dinâmico para o LED
+        onValue(ledRef, (snapshot) => {
+            const currentStatus = snapshot.val();
+            set(ledRef, currentStatus === 0 ? 1 : 0); // Alterna o estado do LED
+        }, { onlyOnce: true }); // Garante que a leitura seja feita apenas uma vez
     }
+
+    const buttonFunctions = ['led', "ledOne", "ledTwo"];
 
     return (
         <ImageContainer
             source={bgImg}
         >
             <HomeHeader />
-            <Container>
-                <FlatList
-                    numColumns={2}
-                    scrollEnabled={false}
-                    style={{ width: "100%" }}
-                    data={sensors}
-                    keyExtractor={item => item}
-                    renderItem={({ item }) => {
-                        const Icon = iconMapping[item as keyof typeof iconMapping];
-                        const { value, unit } = sensorData[item as keyof typeof sensorData];
-                        return (
-                            <SensorBox>
-                                <SensorText>{item}</SensorText>
-                                <ValueBox>
-                                    <Icon
-                                        color={theme.colors.green_700}
-                                        weight="bold"
-                                        size={32}
-                                    />
-                                    {
-                                        loading ?
-                                            <ValueText>
-                                                <ActivityIndicator size="small" color={theme.colors.green_700} />
-                                            </ValueText>
-                                            :
-                                            <ValueText>
-                                                {value}{unit}
-                                            </ValueText>
-                                    }
-                                </ValueBox>
-                            </SensorBox>
-                        );
-                    }}
-                />
+            <ScrollView>
 
-                <Button
-                    title="Gerar relatório de usuário"
-                    style={{ marginBottom: 60 }}
-                    onPress={generatePdf}
-                />
+                {
+                    lightSensor === 1 ? (
+                        <LightContainer>
+                            <SunDim
+                                color="yellow"
+                                weight="bold"
+                                size={20}
+                            />
+                            <SunLightText>
+                                Luz do Sol
+                            </SunLightText>
+                        </LightContainer>
+                    ) : (
+                        <LightContainer>
+                            <LightbulbFilament
+                                color="#B20595"
+                                weight="bold"
+                                size={20}
+                            />
+                            <SunLightText>
+                                Indoor
+                            </SunLightText>
+                        </LightContainer>
+                    )
+                }
 
-                <LogoutContainer>
+
+                {[...Array(3)].map((_, index) => (
+                    <Container key={index}>
+                        <FlatList
+                            numColumns={2}
+                            scrollEnabled={false} // Desabilitar o scroll interno do FlatList
+                            style={{ width: "100%" }}
+                            data={sensors}
+                            keyExtractor={item => item}
+                            ListHeaderComponent={() => (
+                                <ListTitleBox>
+                                    <ListLeftContainer>
+                                        <PlantText>
+                                            Tomate Cereja
+                                        </PlantText>
+                                    </ListLeftContainer>
+                                </ListTitleBox>
+                            )}
+                            renderItem={({ item }) => {
+                                const Icon = iconMapping[item as keyof typeof iconMapping];
+                                const { value, unit } = sensorData[item as keyof typeof sensorData];
+                                return (
+                                    <SensorBox>
+                                        <SensorText>{item}</SensorText>
+                                        <ValueBox>
+                                            <Icon
+                                                color={theme.colors.green_700}
+                                                weight="bold"
+                                                size={32}
+                                            />
+                                            {
+                                                loading ?
+                                                    <ValueText>
+                                                        <ActivityIndicator size="small" color={theme.colors.green_700} />
+                                                    </ValueText>
+                                                    :
+                                                    <ValueText>
+                                                        {value}{unit}
+                                                    </ValueText>
+                                            }
+                                        </ValueBox>
+                                    </SensorBox>
+                                );
+                            }}
+                            ListFooterComponent={() => (
+                                <Button
+                                    title="Regar plantas"
+                                    type="PLAY"
+                                    onPress={() => switchLed(buttonFunctions[index])}
+                                    style={{ marginTop: 16, marginBottom: index === 2 ? 30 : 0 }} // Adiciona marginBottom apenas no último botão
+                                />
+                            )}
+                        />
+                    </Container>
+                ))}
+                {/* <LogoutContainer>
                     <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()}>
                         <Logout>
                             Logout
                         </Logout>
                     </TouchableOpacity>
-                </LogoutContainer>
-            </Container>
+                </LogoutContainer> */}
+            </ScrollView>
         </ImageContainer>
     );
 }

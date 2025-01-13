@@ -1,5 +1,6 @@
 import { BackHeader } from "../../components/BackHeader";
 import { ModuleCard } from "../../components/ModuleCard";
+import { TextHeader } from "../../components/TextHeader";
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png"
 import { ModuleCardContainer } from "./styles";
@@ -9,8 +10,8 @@ export function Modules() {
         <ImageContainer
             source={bgImg}
         >
-            <BackHeader
-                title="Módulos"
+            <TextHeader
+                title="Configurar plantações"
             />
             <ModuleCardContainer>
                 <ModuleCard
