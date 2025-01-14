@@ -8,14 +8,15 @@ import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 type Props = {
     title: string;
-}
+    onConfigure: () => void; // Função para o botão Configurar
+};
 
-export function ModuleCard({ title }: Props) {
-    const [disabled, setDisabled] = useState(false)
-    const navigation = useNavigation<AppNavigationRoutesProps>()
+export function ModuleCard({ title, onConfigure }: Props) {
+    const [disabled, setDisabled] = useState(false);
+    const navigation = useNavigation<AppNavigationRoutesProps>();
 
     function handleUserPermission() {
-        navigation.navigate("plantData")
+        navigation.navigate("plantData");
     }
 
     useEffect(() => {
@@ -27,7 +28,7 @@ export function ModuleCard({ title }: Props) {
                 text1: "Banco de dados bloqueado.",
                 text2: "Função para usuário premium!",
                 visibilityTime: 2000,
-                position: "bottom"
+                position: "bottom",
             });
         }
     }, []);
@@ -40,6 +41,7 @@ export function ModuleCard({ title }: Props) {
             <ButtonsView>
                 <ModuleButton
                     type="true"
+                    onPress={onConfigure} // Função para o botão Configurar
                 >
                     <ButtonText>
                         Configurar
@@ -60,6 +62,6 @@ export function ModuleCard({ title }: Props) {
                     </ButtonText>
                 </ModuleButton>
             </ButtonsView>
-        </ModuleContainer >
-    )
+        </ModuleContainer>
+    );
 }

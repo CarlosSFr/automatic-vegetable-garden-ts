@@ -67,7 +67,7 @@ export function Home() {
 
     const sensorData = {
         "Temperatura": { value: temp, unit: "°C" },
-        "Umidade": { value: humid, unit: "%" },
+        "Umidade": { value: humid, unit: "" },
         "Nível do Tanque": { value: tanklevel, unit: "%" },
         "Temperatura Solo": { value: tempsoil, unit: "°C" }
     };
@@ -97,7 +97,7 @@ export function Home() {
             <ScrollView>
 
                 {
-                    lightSensor === 1 ? (
+                    lightSensor === 0 ? (
                         <LightContainer>
                             <SunDim
                                 color="yellow"
