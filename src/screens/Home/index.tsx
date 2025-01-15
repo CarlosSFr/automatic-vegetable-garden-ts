@@ -1,39 +1,75 @@
-import { Container, LightContainer, ListLeftContainer, ListTitleBox, Logout, LogoutContainer, PlantText, SensorBox, SensorText, SunLightText, ValueBox, ValueText } from "./styles";
+import {
+    Container,
+    LightContainer,
+    ListLeftContainer,
+    ListTitleBox,
+    PlantText,
+    SensorBox,
+    SensorText,
+    SunLightText,
+    ValueBox,
+    ValueText
+} from "./styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { HomeHeader } from "../../components/HomeHeader";
-import { ActivityIndicator, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView } from "react-native";
 import { ImageContainer } from "./styles";
 import { Button } from "../../components/Button";
 import { useEffect, useState } from "react";
 import { Thermometer, DropHalf, SunDim, Waves, LightbulbFilament } from "phosphor-react-native";
 import theme from "../../theme";
-
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
 import { FIREBASE_AUTH } from "../../../firebase";
-import { db, ref, onValue, storage } from "../../../firebase"
-import { getDownloadURL, ref as sRef } from 'firebase/storage';
+import { db, ref, onValue, storage } from "../../../firebase";
 import { set } from "firebase/database";
+import { getDownloadURL, ref as sRef } from 'firebase/storage';
+
+type ModuleData = {
+    temp: number;
+    humid: number;
+    tankLevel: number;
+    tempSoil: number;
+    name: string;
+};
+
+type ModulesData = {
+    moduleOne: ModuleData;
+    moduleTwo: ModuleData;
+    moduleThree: ModuleData;
+};
 
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
-    const sensors = ["Temperatura", "Umidade", "Nível do Tanque", "Temperatura Solo"];
-    const [temp, setTemp] = useState(0);
-    const [humid, setHumid] = useState(0);
-    const [tanklevel, setTankLevel] = useState(0);
-    const [tempsoil, setTempSoil] = useState(0);
-    const [user, setUser] = useState(FIREBASE_AUTH.currentUser);
-    const [loading, setLoading] = useState(true);
-    const [name, setName] = useState("");
-    // const [status, setStatus] = useState(0);
-    const [lightSensor, setlightSensor] = useState(0);
+
+    const sensors: string[] = ["Temperatura", "Umidade", "Nível do Tanque", "Temperatura Solo"];
+    const [modulesData, setModulesData] = useState<ModulesData>({
+        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
+        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
+        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
+    });
+    const [loading, setLoading] = useState<boolean>(true);
+    const [lightSensor, setLightSensor] = useState<number>(0);
 
     useEffect(() => {
-        const moduleOneRef = ref(db, '/moduleOne');
-        const moduleTwoRef = ref(db, '/moduleTwo');
-        const moduleThreeRef = ref(db, '/moduleThree');
-        const user = FIREBASE_AUTH.currentUser;
+        const moduleRefs: Record<keyof ModulesData, any> = {
+            moduleOne: ref(db, "/moduleOne"),
+            moduleTwo: ref(db, "/moduleTwo"),
+            moduleThree: ref(db, "/moduleThree"),
+        };
+
+        Object.entries(moduleRefs).forEach(([key, moduleRef]) => {
+            onValue(moduleRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    setModulesData((prev) => ({
+                        ...prev,
+                        [key as keyof ModulesData]: { ...prev[key as keyof ModulesData], ...data },
+                    }));
+                }
+            });
+        });
 
         const fetchData = async () => {
             try {
@@ -48,7 +84,7 @@ export function Home() {
                 const data = await response.json();
 
                 // Exibindo o conteúdo do arquivo JSON no console
-                // console.log(data);
+                //console.log(data);
 
                 // Acessando um exemplo específico (como o título das plantas)
             } catch (error) {
@@ -58,139 +94,88 @@ export function Home() {
 
         fetchData();
 
-        onValue(moduleOneRef, (snapshot) => {
-            const moduleOneData = snapshot.val();
-            if (moduleOneData) {
-                setTemp(moduleOneData.temp); // Acessa "temp" dentro de "moduleOne"
-                setHumid(moduleOneData.humid);
-                setTankLevel(moduleOneData.tankLevel);
-                setTempSoil(moduleOneData.tempSoil);
-                setName(moduleOneData.name);
-            }
-        });
-        onValue(moduleTwoRef, (snapshot) => {
-            const moduleTwoData = snapshot.val();
-            if (moduleTwoData) {
-                setTemp(moduleTwoData.temp); // Acessa "temp" dentro de "moduleOne"
-                setHumid(moduleTwoData.humid);
-                setTankLevel(moduleTwoData.tankLevel);
-                setTempSoil(moduleTwoData.tempSoil);
-                setName(moduleTwoData.name);
-            }
-        });
-        onValue(moduleThreeRef, (snapshot) => {
-            const moduleThreeData = snapshot.val();
-            if (moduleThreeData) {
-                setTemp(moduleThreeData.temp); // Acessa "temp" dentro de "moduleOne"
-                setHumid(moduleThreeData.humid);
-                setTankLevel(moduleThreeData.tankLevel);
-                setTempSoil(moduleThreeData.tempSoil);
-                setName(moduleThreeData.name);
-            }
-        });
-
-        setUser(user);
         setLoading(false);
+    }, []);
 
-    }, [db])
+    useEffect(() => {
+        if (modulesData.moduleOne.humid > 60) {
+            setLightSensor(1); // Atualiza o lightSensor para "Indoor"
+        } else {
+            setLightSensor(0); // Define o lightSensor para "Luz do Sol"
+        }
+    }, [modulesData.moduleOne.humid]);
 
-    const sensorData = {
-        "Temperatura": { value: temp, unit: "°C" },
-        "Umidade": { value: humid, unit: "" },
-        "Nível do Tanque": { value: tanklevel, unit: "%" },
-        "Temperatura Solo": { value: tempsoil, unit: "°C" }
-    };
-
-    const iconMapping = {
+    const iconMapping: Record<string, React.ElementType> = {
         "Temperatura": Thermometer,
         "Umidade": DropHalf,
         "Nível do Tanque": Waves,
-        "Temperatura Solo": Thermometer
+        "Temperatura Solo": Thermometer,
     };
 
-    function switchLed(ledKey: string) {
-        const ledRef = ref(db, `/${ledKey}`); // Caminho dinâmico para o LED
+    const sensorMapping: Record<string, keyof ModuleData> = {
+        "Temperatura": "temp",
+        "Umidade": "humid",
+        "Nível do Tanque": "tankLevel",
+        "Temperatura Solo": "tempSoil",
+    };
+
+    const switchLed = (ledKey: string) => {
+        const ledRef = ref(db, `/${ledKey}`);
         onValue(ledRef, (snapshot) => {
             const currentStatus = snapshot.val();
-            set(ledRef, currentStatus === 0 ? 1 : 0); // Alterna o estado do LED
-        }, { onlyOnce: true }); // Garante que a leitura seja feita apenas uma vez
-    }
-
-    const buttonFunctions = ['moduleOne/bombOne', "moduleTwo/bombTwo", "moduleThree/bombThree"];
+            set(ledRef, currentStatus === 0 ? 1 : 0);
+        }, { onlyOnce: true });
+    };
 
     return (
-        <ImageContainer
-            source={bgImg}
-        >
+        <ImageContainer source={bgImg}>
             <HomeHeader />
             <ScrollView>
+                {lightSensor === 0 ? (
+                    <LightContainer>
+                        <SunDim color="yellow" weight="bold" size={20} />
+                        <SunLightText>Luz do Sol</SunLightText>
+                    </LightContainer>
+                ) : (
+                    <LightContainer>
+                        <LightbulbFilament color="#B20595" weight="bold" size={20} />
+                        <SunLightText>Indoor</SunLightText>
+                    </LightContainer>
+                )}
 
-                {
-                    lightSensor === 0 ? (
-                        <LightContainer>
-                            <SunDim
-                                color="yellow"
-                                weight="bold"
-                                size={20}
-                            />
-                            <SunLightText>
-                                Luz do Sol
-                            </SunLightText>
-                        </LightContainer>
-                    ) : (
-                        <LightContainer>
-                            <LightbulbFilament
-                                color="#B20595"
-                                weight="bold"
-                                size={20}
-                            />
-                            <SunLightText>
-                                Indoor
-                            </SunLightText>
-                        </LightContainer>
-                    )
-                }
-
-
-                {[...Array(3)].map((_, index) => (
-                    <Container key={index}>
+                {Object.entries(modulesData).map(([moduleKey, moduleData], index) => (
+                    <Container key={moduleKey}>
                         <FlatList
                             numColumns={2}
-                            scrollEnabled={false} // Desabilitar o scroll interno do FlatList
+                            scrollEnabled={false}
                             style={{ width: "100%" }}
                             data={sensors}
-                            keyExtractor={item => item}
+                            keyExtractor={(item) => item}
                             ListHeaderComponent={() => (
                                 <ListTitleBox>
                                     <ListLeftContainer>
-                                        <PlantText>
-                                            Tomate Cereja
-                                        </PlantText>
+                                        <PlantText>{moduleData.name || "Planta"}</PlantText>
                                     </ListLeftContainer>
                                 </ListTitleBox>
                             )}
                             renderItem={({ item }) => {
-                                const Icon = iconMapping[item as keyof typeof iconMapping];
-                                const { value, unit } = sensorData[item as keyof typeof sensorData];
+                                const Icon = iconMapping[item];
+                                const value = moduleData[sensorMapping[item]];
+                                const unit = item === "Temperatura" || item === "Temperatura Solo" ? "°C" : item === "Nível do Tanque" ? "%" : "";
                                 return (
                                     <SensorBox>
                                         <SensorText>{item}</SensorText>
                                         <ValueBox>
-                                            <Icon
-                                                color={theme.colors.green_700}
-                                                weight="bold"
-                                                size={32}
-                                            />
-                                            {
-                                                loading ?
-                                                    <ValueText>
-                                                        <ActivityIndicator size="small" color={theme.colors.green_700} />
-                                                    </ValueText>
-                                                    :
-                                                    <ValueText>
-                                                        {value}{unit}
-                                                    </ValueText>
-                                            }
+                                            <Icon color={theme.colors.green_700} weight="bold" size={32} />
+                                            {loading ? (
+                                                <ValueText>
+                                                    <ActivityIndicator size="small" color={theme.colors.green_700} />
+                                                </ValueText>
+                                            ) : (
+                                                <ValueText>
+                                                    {value}{unit}
+                                                </ValueText>
+                                            )}
                                         </ValueBox>
                                     </SensorBox>
                                 );
@@ -199,8 +184,8 @@ export function Home() {
                                 <Button
                                     title="Regar plantas"
                                     type="PLAY"
-                                    onPress={() => switchLed(buttonFunctions[index])}
-                                    style={{ marginTop: 16, marginBottom: index === 2 ? 30 : 0 }} // Adiciona marginBottom apenas no último botão
+                                    onPress={() => switchLed(`${moduleKey}/bomb`)}
+                                    style={{ marginTop: 16, marginBottom: index === 2 ? 30 : 0 }}
                                 />
                             )}
                         />

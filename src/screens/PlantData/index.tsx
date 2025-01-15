@@ -5,8 +5,39 @@ import bgImg from "./../../assets/bg-img-dark.png";
 import { Container, DataContainer } from "./styles";
 import { plants } from "./../../../data.json";
 import { FlatList } from "react-native";
+import { useEffect } from "react";
+
+import { storage } from "../../../firebase";
+import { getDownloadURL, ref as sRef } from 'firebase/storage';
 
 export function PlantData() {
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                // Referência ao arquivo JSON no Firebase Storage
+                const reference = sRef(storage, "PlantData/data.json")
+
+                // Baixar o arquivo JSON como string
+                const url = await getDownloadURL(reference);
+
+                // Buscar o arquivo via URL e transformá-lo em JSON
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Exibindo o conteúdo do arquivo JSON no console
+                //console.log(data);
+
+                // Acessando um exemplo específico (como o título das plantas)
+            } catch (error) {
+                console.error('Erro ao acessar o arquivo JSON:', error);
+            }
+        };
+
+        fetchData();
+
+    }, []);
 
     return (
         <ImageContainer
