@@ -1,61 +1,70 @@
 import { BackHeader } from "../../components/BackHeader";
-import { DataCard, ImageKeys } from "../../components/DataCard";
+import { DataCard } from "../../components/DataCard";
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { Container, DataContainer } from "./styles";
-import { plants } from "./../../../data.json";
 import { FlatList } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { storage } from "../../../firebase";
-import { getDownloadURL, ref as sRef } from 'firebase/storage';
+import { getDownloadURL, ref as sRef } from "firebase/storage";
 
 export function PlantData() {
+    const [plants, setPlants] = useState<any[]>([]);
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
                 // Referência ao arquivo JSON no Firebase Storage
-                const reference = sRef(storage, "PlantData/data.json")
+                const jsonRef = sRef(storage, "PlantData/data.json");
+                const jsonUrl = await getDownloadURL(jsonRef);
+                const jsonResponse = await fetch(jsonUrl);
+                const jsonData = await jsonResponse.json();
 
-                // Baixar o arquivo JSON como string
-                const url = await getDownloadURL(reference);
+                // Mapeia as plantas e tenta buscar as URLs das imagens
+                const plantsWithImages = await Promise.all(
+                    jsonData.plants.map(async (plant: any) => {
+                        try {
+                            // Tenta obter a URL da imagem
+                            const imageRef = sRef(storage, `PlantData/${plant.photo}`);
+                            const imageUrl = await getDownloadURL(imageRef);
 
-                // Buscar o arquivo via URL e transformá-lo em JSON
-                const response = await fetch(url);
-                const data = await response.json();
+                            // Retorna a planta apenas se a imagem for encontrada
+                            return {
+                                ...plant,
+                                imageUrl,
+                            };
+                        } catch (error) {
+                            //console.warn(`Imagem não encontrada para: ${plant.photo}`);
+                            return null; // Planta descartada se a imagem não existir
+                        }
+                    })
+                );
 
-                // Exibindo o conteúdo do arquivo JSON no console
-                //console.log(data);
-
-                // Acessando um exemplo específico (como o título das plantas)
+                // Filtra plantas válidas (aquelas que possuem URL da imagem)
+                setPlants(plantsWithImages.filter((plant) => plant !== null));
             } catch (error) {
-                console.error('Erro ao acessar o arquivo JSON:', error);
+                console.error("Erro ao acessar dados ou imagens:", error);
             }
         };
 
         fetchData();
-
     }, []);
 
     return (
-        <ImageContainer
-            source={bgImg}
-        >
-            <BackHeader
-                title="Dados"
-            />
+        <ImageContainer source={bgImg}>
+            <BackHeader title="Dados" />
             <Container>
                 <DataContainer>
                     <FlatList
                         data={plants}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.title}
                         renderItem={({ item }) => (
                             <DataCard
-                                adress={item.photo as ImageKeys}
+                                adress={item.imageUrl} // Usa a URL válida da imagem
                                 title={item.title}
-                                description={item.irrigationTime}
+                                umidadeIdeal={item.idealUmid}
+                                temperaturaIdeal={item.idealTemp}
                             />
                         )}
                         showsVerticalScrollIndicator={false}
@@ -63,5 +72,5 @@ export function PlantData() {
                 </DataContainer>
             </Container>
         </ImageContainer>
-    )
+    );
 }

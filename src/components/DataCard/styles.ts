@@ -8,7 +8,7 @@ export const DataCardContainer = styled.View`
     border: 1px solid ${props => props.theme.colors.green_700};
     align-items: center;
     justify-content: space-between;
-    padding: 14px 10px;
+    padding: 14px 16px 14px 14px;
     flex-direction: row;
     margin-bottom: 14px;
 `
@@ -34,7 +34,7 @@ export const AlignTextContainer = styled.View`
 
 export const DataPic = styled(Image)`
     border-radius: 6px;
-    height: 40px;
-    width: 40px;
+    height: 50px;
+    width: 50px;
     border: 1px solid ${props => props.theme.colors.gray_200};
 `
