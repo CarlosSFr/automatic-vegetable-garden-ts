@@ -1,4 +1,7 @@
+import { Dimensions } from "react-native";
 import styled from "styled-components/native";
+
+const screenHeight = Dimensions.get('window').height;
 
 export const ModuleCardContainer = styled.View`
     padding: 50px 30px;
@@ -10,7 +13,11 @@ export const ModalContainer = styled.View`
     padding: 20px 16px; 
     background-color: ${({ theme }) => theme.colors.gray_700};
     border-radius: 8px; 
-    height: 55%; 
+    flex-shrink: 1;
+    /* min-height: 43%;
+    max-height: 60%; */
+    max-height: ${screenHeight * 0.6}px; /* 80% da altura da tela */
+    min-height: ${screenHeight * 0.44}px; /* 20% da altura da tela */
     width: 90%;
 `;
 

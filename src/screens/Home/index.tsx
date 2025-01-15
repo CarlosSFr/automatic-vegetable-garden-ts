@@ -23,13 +23,16 @@ export function Home() {
     const [humid, setHumid] = useState(0);
     const [tanklevel, setTankLevel] = useState(0);
     const [tempsoil, setTempSoil] = useState(0);
-    const [user, setUser] = useState(FIREBASE_AUTH.currentUser)
-    const [loading, setLoading] = useState(true)
-    // const [status, setStatus] = useState(0)
-    const [lightSensor, setlightSensor] = useState(0)
+    const [user, setUser] = useState(FIREBASE_AUTH.currentUser);
+    const [loading, setLoading] = useState(true);
+    const [name, setName] = useState("");
+    // const [status, setStatus] = useState(0);
+    const [lightSensor, setlightSensor] = useState(0);
 
     useEffect(() => {
-        const data = ref(db);
+        const moduleOneRef = ref(db, '/moduleOne');
+        const moduleTwoRef = ref(db, '/moduleTwo');
+        const moduleThreeRef = ref(db, '/moduleThree');
         const user = FIREBASE_AUTH.currentUser;
 
         const fetchData = async () => {
@@ -45,7 +48,7 @@ export function Home() {
                 const data = await response.json();
 
                 // Exibindo o conteúdo do arquivo JSON no console
-                console.log(data);
+                // console.log(data);
 
                 // Acessando um exemplo específico (como o título das plantas)
             } catch (error) {
@@ -55,14 +58,40 @@ export function Home() {
 
         fetchData();
 
-        onValue(data, (snapshot) => {
-            setTemp(snapshot.val().temp)
-            setHumid(snapshot.val().humid)
-            setTankLevel(snapshot.val().tanklevel)
-            setTempSoil(snapshot.val().tempsoil)
+        onValue(moduleOneRef, (snapshot) => {
+            const moduleOneData = snapshot.val();
+            if (moduleOneData) {
+                setTemp(moduleOneData.temp); // Acessa "temp" dentro de "moduleOne"
+                setHumid(moduleOneData.humid);
+                setTankLevel(moduleOneData.tankLevel);
+                setTempSoil(moduleOneData.tempSoil);
+                setName(moduleOneData.name);
+            }
         });
-        setUser(user)
-        setLoading(false)
+        onValue(moduleTwoRef, (snapshot) => {
+            const moduleTwoData = snapshot.val();
+            if (moduleTwoData) {
+                setTemp(moduleTwoData.temp); // Acessa "temp" dentro de "moduleOne"
+                setHumid(moduleTwoData.humid);
+                setTankLevel(moduleTwoData.tankLevel);
+                setTempSoil(moduleTwoData.tempSoil);
+                setName(moduleTwoData.name);
+            }
+        });
+        onValue(moduleThreeRef, (snapshot) => {
+            const moduleThreeData = snapshot.val();
+            if (moduleThreeData) {
+                setTemp(moduleThreeData.temp); // Acessa "temp" dentro de "moduleOne"
+                setHumid(moduleThreeData.humid);
+                setTankLevel(moduleThreeData.tankLevel);
+                setTempSoil(moduleThreeData.tempSoil);
+                setName(moduleThreeData.name);
+            }
+        });
+
+        setUser(user);
+        setLoading(false);
+
     }, [db])
 
     const sensorData = {
@@ -87,7 +116,7 @@ export function Home() {
         }, { onlyOnce: true }); // Garante que a leitura seja feita apenas uma vez
     }
 
-    const buttonFunctions = ['led', "ledOne", "ledTwo"];
+    const buttonFunctions = ['moduleOne/bombOne', "moduleTwo/bombTwo", "moduleThree/bombThree"];
 
     return (
         <ImageContainer
@@ -177,13 +206,6 @@ export function Home() {
                         />
                     </Container>
                 ))}
-                {/* <LogoutContainer>
-                    <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()}>
-                        <Logout>
-                            Logout
-                        </Logout>
-                    </TouchableOpacity>
-                </LogoutContainer> */}
             </ScrollView>
         </ImageContainer>
     );
