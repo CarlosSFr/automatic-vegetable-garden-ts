@@ -1,23 +1,30 @@
-import { ReactNode, createContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-type CyclesContextProviderProps = {
-    children: ReactNode;
+type ModuleContextType = {
+    selectedModule: string | null;
+    setSelectedModule: (module: string) => void;
+};
+
+const ModuleContext = createContext<ModuleContextType | undefined>(undefined);
+
+interface ModuleProviderProps {
+    children: React.ReactNode;
 }
 
-export const CyclesContext = createContext({});
-
-export function CyclesContextProvider({ children }: CyclesContextProviderProps) {
-    const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
-
+export const ModuleProvider: React.FC<ModuleProviderProps> = ({ children }) => {
+    const [selectedModule, setSelectedModule] = useState<string | null>(null);
 
     return (
-        <CyclesContext.Provider
-            value={{
-
-            }}
-        >
+        <ModuleContext.Provider value={{ selectedModule, setSelectedModule }}>
             {children}
-        </CyclesContext.Provider>
-    )
-}
+        </ModuleContext.Provider>
+    );
+};
 
+export const useModule = (): ModuleContextType => {
+    const context = useContext(ModuleContext);
+    if (!context) {
+        throw new Error("useModule must be used within a ModuleProvider");
+    }
+    return context;
+};

@@ -6,7 +6,6 @@ import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { ModuleCardContainer } from "./styles";
 import { Modal } from "../../components/Modal";
-import { Text, View } from "react-native";
 import { Button } from "../../components/Button";
 import { useTheme } from "styled-components";
 import { ModalContainer, ModalFormContainer, ModalFormTitles, ModalText } from "./styles";
@@ -74,7 +73,6 @@ export function Modules() {
                                     placeholder="Nome"
                                     onChangeText={onChange}
                                     value={value}
-                                    secureTextEntry
                                     style={{ marginBottom: 12 }}
                                 />
                             )}
@@ -91,7 +89,6 @@ export function Modules() {
                                     placeholder="Nível"
                                     onChangeText={onChange}
                                     value={value}
-                                    secureTextEntry
                                     style={{ marginBottom: 12 }}
                                 />
                             )}

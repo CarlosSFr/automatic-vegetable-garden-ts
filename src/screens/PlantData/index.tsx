@@ -6,11 +6,16 @@ import { Container, DataContainer } from "./styles";
 import { FlatList } from "react-native";
 import { useEffect, useState } from "react";
 
+import { useModule } from "../../contexts/CyclesContext";
+
 import { storage } from "../../../firebase";
+import { db, ref as dbRef } from "../../../firebase";
 import { getDownloadURL, ref as sRef } from "firebase/storage";
+import { set } from "firebase/database";
 
 export function PlantData() {
     const [plants, setPlants] = useState<any[]>([]);
+    const { selectedModule } = useModule();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,6 +56,25 @@ export function PlantData() {
         fetchData();
     }, []);
 
+    const handleAddPlant = (plant: any) => {
+        if (!selectedModule) {
+            console.warn("Nenhum módulo selecionado.");
+            return;
+        }
+
+        const plantRef = dbRef(db, `${selectedModule}/name`)
+
+        // set(plantRef, {
+        //     name: plant.title,
+        //      umidadeIdeal: plant.idealUmid,
+        //      temperaturaIdeal: plant.idealTemp,
+        //      imageUrl: plant.imageUrl,
+        // })
+        set(plantRef, plant.title)
+            .then(() => console.log("Planta cadastrada com sucesso:", JSON.stringify(plant)))
+            .catch((error) => console.error("Erro ao cadastrar planta:", error));
+    };
+
     return (
         <ImageContainer source={bgImg}>
             <BackHeader title="Dados" />
@@ -65,6 +89,7 @@ export function PlantData() {
                                 title={item.title}
                                 umidadeIdeal={item.idealUmid}
                                 temperaturaIdeal={item.idealTemp}
+                                onAdd={() => handleAddPlant(item)} // Adiciona a planta ao módulo selecionado
                             />
                         )}
                         showsVerticalScrollIndicator={false}

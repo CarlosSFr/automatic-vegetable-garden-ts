@@ -8,9 +8,10 @@ type Props = {
     title: string;
     umidadeIdeal: string;
     temperaturaIdeal: string;
+    onAdd: () => void; // Função chamada ao clicar no botão
 };
 
-export function DataCard({ adress, title, umidadeIdeal, temperaturaIdeal }: Props) {
+export function DataCard({ adress, title, umidadeIdeal, temperaturaIdeal, onAdd }: Props) {
     return (
         <DataCardContainer>
             <LeftContainer>
@@ -24,7 +25,7 @@ export function DataCard({ adress, title, umidadeIdeal, temperaturaIdeal }: Prop
                     <DataDescription>Temperatura Ideal: {temperaturaIdeal}</DataDescription>
                 </AlignTextContainer>
             </LeftContainer>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onAdd}>
                 <PlusSquare size={24} color={theme.colors.gray_200} weight="bold" />
             </TouchableOpacity>
         </DataCardContainer>

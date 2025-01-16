@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
+import { useModule } from "../../contexts/CyclesContext";
 
 type Props = {
     title: string;
@@ -13,9 +14,11 @@ type Props = {
 
 export function ModuleCard({ title, onConfigure }: Props) {
     const [disabled, setDisabled] = useState(false);
+    const { setSelectedModule } = useModule();
     const navigation = useNavigation<AppNavigationRoutesProps>();
 
     function handleUserPermission() {
+        setSelectedModule(title === "Plantação 1" ? "moduleOne" : title === "Plantação 2" ? "moduleTwo" : "moduleThree");
         navigation.navigate("plantData");
     }
 

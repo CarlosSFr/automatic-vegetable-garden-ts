@@ -3,7 +3,7 @@ import theme from "./src/theme"
 import { RobotoCondensed_400Regular, RobotoCondensed_700Bold, useFonts } from "@expo-google-fonts/roboto-condensed"
 import { Loading } from './src/components/Loading';
 import { Routes } from './src/routes';
-import { CyclesContextProvider } from './src/contexts/CyclesContext';
+import { ModuleProvider } from './src/contexts/CyclesContext';
 import Toast from 'react-native-toast-message';
 
 export default function App() {
@@ -11,9 +11,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme} >
-      <CyclesContextProvider>
+      <ModuleProvider>
         {fontsLoaded ? <Routes /> : <Loading />}
-      </CyclesContextProvider>
+      </ModuleProvider>
       <Toast />
     </ThemeProvider>
   );
