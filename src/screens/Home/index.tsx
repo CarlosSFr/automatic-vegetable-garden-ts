@@ -1,5 +1,6 @@
 import {
     Container,
+    IdealText,
     LightContainer,
     ListLeftContainer,
     ListTitleBox,
@@ -31,7 +32,12 @@ type ModuleData = {
     humid: number;
     tankLevel: number;
     tempSoil: number;
-    name: string;
+    details: {
+        title: string,
+        idealSoil: string,
+        idealUmid: string,
+        idealTemp: string,
+    }
 };
 
 type ModulesData = {
@@ -45,9 +51,9 @@ export function Home() {
 
     const sensors: string[] = ["Temperatura", "Umidade", "Nível do Tanque", "Temperatura Solo"];
     const [modulesData, setModulesData] = useState<ModulesData>({
-        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
-        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
-        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, name: "" },
+        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
+        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
+        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
     });
     const [loading, setLoading] = useState<boolean>(true);
     const [lightSensor, setLightSensor] = useState<number>(0);
@@ -154,7 +160,7 @@ export function Home() {
                             ListHeaderComponent={() => (
                                 <ListTitleBox>
                                     <ListLeftContainer>
-                                        <PlantText>{moduleData.name || "Planta"}</PlantText>
+                                        <PlantText>{moduleData.details.title || "Planta"}</PlantText>
                                     </ListLeftContainer>
                                 </ListTitleBox>
                             )}
@@ -162,21 +168,35 @@ export function Home() {
                                 const Icon = iconMapping[item];
                                 const value = moduleData[sensorMapping[item]];
                                 const unit = item === "Temperatura" || item === "Temperatura Solo" ? "°C" : item === "Nível do Tanque" ? "%" : "";
+                                const isIdealInfo = item === "Temperatura" || item === "Umidade" || item === "Temperatura Solo";
+
+                                // Definição do texto ideal
+                                const idealText =
+                                    item === "Temperatura" ? `Temp. Ideal: ${moduleData.details.idealTemp}` :
+                                        item === "Temperatura Solo" ? `Temp. Ideal: ${moduleData.details.idealSoil}` :
+                                            item === "Umidade" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
+
+                                // Verifica se o valor é numérico (para garantir que não estamos tentando renderizar um objeto)
+                                const renderValue = typeof value === 'number' ? (
+                                    <ValueText>{value}{unit}</ValueText>
+                                ) : (
+                                    <ValueText>N/A</ValueText>
+                                );
+
                                 return (
                                     <SensorBox>
                                         <SensorText>{item}</SensorText>
-                                        <ValueBox>
+                                        <ValueBox style={{ paddingBottom: isIdealInfo ? 0 : 14 }}>
                                             <Icon color={theme.colors.green_700} weight="bold" size={32} />
                                             {loading ? (
                                                 <ValueText>
                                                     <ActivityIndicator size="small" color={theme.colors.green_700} />
                                                 </ValueText>
                                             ) : (
-                                                <ValueText>
-                                                    {value}{unit}
-                                                </ValueText>
+                                                renderValue
                                             )}
                                         </ValueBox>
+                                        {isIdealInfo && <IdealText>{idealText}</IdealText>}
                                     </SensorBox>
                                 );
                             }}
