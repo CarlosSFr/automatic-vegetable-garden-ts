@@ -75,25 +75,7 @@ export function PlantData() {
             .then(() => console.log("Planta cadastrada com sucesso:", JSON.stringify(plantDetails)))
             .catch((error) => console.error("Erro ao cadastrar planta:", error));
     };
-    // const handleAddPlantDetails = (plant: any) => {
-    //     if (!selectedModule) {
-    //         console.warn("Nenhum módulo selecionado.");
-    //         return;
-    //     }
 
-    //     const plantDetailsRef = dbRef(db, `${selectedModule}/details`);
-
-    //     const plantDetails = {
-    //         title: plant.title,
-    //         idealUmid: plant.idealUmid,
-    //         idealTemp: plant.idealTemp,
-    //         imageUrl: plant.imageUrl,
-    //     };
-
-    //     set(plantDetailsRef, plantDetails)
-    //         .then(() => console.log("Detalhes da planta cadastrados com sucesso:", JSON.stringify(plantDetails)))
-    //         .catch((error) => console.error("Erro ao cadastrar detalhes da planta:", error));
-    // };
     return (
         <ImageContainer source={bgImg}>
             <BackHeader title="Dados" />

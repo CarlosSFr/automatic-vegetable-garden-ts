@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BackHeader } from "../../components/BackHeader";
 import { ModuleCard } from "../../components/ModuleCard";
 import { TextHeader } from "../../components/TextHeader";
@@ -11,29 +11,52 @@ import { useTheme } from "styled-components";
 import { ModalContainer, ModalFormContainer, ModalFormTitles, ModalText } from "./styles";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "../../components/Input";
+import { useModule } from "../../contexts/CyclesContext";
 
 export function Modules() {
     const [isModalOpen, setModalOpen] = useState(false);
     const theme = useTheme();
+    const { setSelectedModule, selectedModule } = useModule();
     const backgroundModal = theme.colors.gray_700;
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+        defaultValues: {
+            plantName: "",
+            plantUmidity: "",
+        }
     });
 
     function configurePlantation1() {
         setModalOpen(true); // Abre o modal
+        setSelectedModule("moduleOne");
+        //console.log("Selected module atualizado:", "moduleOne");
     }
 
     function closeModal() {
-        setModalOpen(false); // Fecha o modal
+        //console.log("Modal fechado para o módulo:", selectedModule);
+        setModalOpen(false);
     }
 
     function configurePlantation2() {
-        console.log("Configurar Plantação 2");
+        setModalOpen(true); // Abre o modal
+        setSelectedModule("moduleTwo");
+        //console.log("Selected module atualizado:", "moduleTwo");
     }
 
     function configurePlantation3() {
-        console.log("Configurar Plantação 3");
+        setModalOpen(true); // Abre o modal
+        setSelectedModule("moduleThree");
+        //console.log("Selected module atualizado:", "moduleThree");
     }
+
+    function saveConfiguration(data: any) {
+        console.log("Dados salvos:", data); // Aqui você pode lidar com os dados do formulário
+        reset(); // Reseta os campos do formulário
+        closeModal(); // Fecha o modal
+    }
+
+    useEffect(() => {
+        //console.log("Selected module atualizado:", selectedModule);
+    }, [selectedModule]);
 
     return (
         <ImageContainer source={bgImg}>
@@ -59,7 +82,7 @@ export function Modules() {
             >
                 <ModalContainer>
                     <ModalText>
-                        Configuração da Plantação 1
+                        Configuração da {selectedModule === "moduleOne" ? "Plantação 1" : selectedModule === "moduleTwo" ? "Plantação 2" : "Plantação 3"}
                     </ModalText>
                     <ModalFormContainer>
                         <ModalFormTitles>
@@ -96,7 +119,7 @@ export function Modules() {
 
 
                     </ModalFormContainer>
-                    <Button title="Salvar configuração" onPress={closeModal} />
+                    <Button title="Salvar configuração" onPress={handleSubmit(saveConfiguration)} />
                 </ModalContainer>
             </Modal>
         </ImageContainer>
