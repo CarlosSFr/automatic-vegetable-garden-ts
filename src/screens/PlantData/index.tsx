@@ -1,17 +1,17 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { FlatList } from "react-native";
 import { BackHeader } from "../../components/BackHeader";
-import { DataCard } from "../../components/DataCard";
+import { DataCard } from "../../components/DataCard"; // Importa o DataCard otimizado
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { Container, DataContainer } from "./styles";
-import { FlatList } from "react-native";
-import { useEffect, useState } from "react";
 
 import { useModule } from "../../contexts/CyclesContext";
 
 import { storage } from "../../../firebase";
 import { db, ref as dbRef } from "../../../firebase";
 import { getDownloadURL, ref as sRef } from "firebase/storage";
-import { set, update } from "firebase/database";
+import { update } from "firebase/database";
 
 export function PlantData() {
     const [plants, setPlants] = useState<any[]>([]);
@@ -30,23 +30,20 @@ export function PlantData() {
                 const plantsWithImages = await Promise.all(
                     jsonData.plants.map(async (plant: any) => {
                         try {
-                            // Tenta obter a URL da imagem
                             const imageRef = sRef(storage, `PlantData/${plant.photo}`);
                             const imageUrl = await getDownloadURL(imageRef);
 
-                            // Retorna a planta apenas se a imagem for encontrada
                             return {
                                 ...plant,
                                 imageUrl,
                             };
-                        } catch (error) {
-                            //console.warn(`Imagem não encontrada para: ${plant.photo}`);
-                            return null; // Planta descartada se a imagem não existir
+                        } catch {
+                            return null;
                         }
                     })
                 );
 
-                // Filtra plantas válidas (aquelas que possuem URL da imagem)
+                // Filtra plantas válidas
                 setPlants(plantsWithImages.filter((plant) => plant !== null));
             } catch (error) {
                 console.error("Erro ao acessar dados ou imagens:", error);
@@ -56,25 +53,29 @@ export function PlantData() {
         fetchData();
     }, []);
 
-    const handleAddPlant = (plant: any) => {
-        if (!selectedModule) {
-            console.warn("Nenhum módulo selecionado.");
-            return;
-        }
+    // Função para adicionar planta ao módulo
+    const handleAddPlant = useCallback(
+        (plant: any) => {
+            if (!selectedModule) {
+                console.warn("Nenhum módulo selecionado.");
+                return;
+            }
 
-        const plantRef = dbRef(db, `${selectedModule}/details`)
+            const plantRef = dbRef(db, `${selectedModule}/details`);
 
-        const plantDetails = {
-            title: plant.title,
-            idealUmid: plant.idealUmid,
-            idealTemp: plant.idealTemp,
-            idealSoil: plant.idealSoil,
-        };
+            const plantDetails = {
+                title: plant.title,
+                idealUmid: plant.idealUmid,
+                idealTemp: plant.idealTemp,
+                idealSoil: plant.idealSoil,
+            };
 
-        update(plantRef, plantDetails)
-            .then(() => console.log("Planta cadastrada com sucesso:", JSON.stringify(plantDetails)))
-            .catch((error) => console.error("Erro ao cadastrar planta:", error));
-    };
+            update(plantRef, plantDetails)
+                .then(() => console.log("Planta cadastrada com sucesso:", JSON.stringify(plantDetails)))
+                .catch((error) => console.error("Erro ao cadastrar planta:", error));
+        },
+        [selectedModule] // Depende apenas do módulo selecionado
+    );
 
     return (
         <ImageContainer source={bgImg}>
@@ -86,13 +87,17 @@ export function PlantData() {
                         keyExtractor={(item) => item.title}
                         renderItem={({ item }) => (
                             <DataCard
-                                adress={item.imageUrl} // Usa a URL válida da imagem
+                                adress={item.imageUrl}
                                 title={item.title}
                                 umidadeIdeal={item.idealUmid}
                                 temperaturaIdeal={item.idealTemp}
-                                onAdd={() => handleAddPlant(item)} // Adiciona a planta ao módulo selecionado
+                                onAdd={() => handleAddPlant(item)} // Passa função estável
                             />
                         )}
+                        initialNumToRender={10} // Renderiza 10 itens inicialmente
+                        maxToRenderPerBatch={5} // Renderiza 5 itens por lote
+                        updateCellsBatchingPeriod={50} // Atualiza itens a cada 50ms
+                        windowSize={21} // Define o tamanho da janela de renderização
                         showsVerticalScrollIndicator={false}
                     />
                 </DataContainer>

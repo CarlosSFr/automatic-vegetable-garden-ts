@@ -40,3 +40,26 @@ export async function uploadProfilePic(uri, currentUser) {
 
     await updateProfile(currentUser, { photoURL: url })
 }
+
+export async function uploadImageToPlantData(uri, imageName) {
+    try {
+        // Define o caminho do arquivo na pasta PlantData
+        const fileRef = sRef(storage, `PlantData/${imageName}`);
+
+        // Faz o fetch da URI para obter o blob
+        const fetchResponse = await fetch(uri);
+        const fileBlob = await fetchResponse.blob();
+
+        // Faz o upload do blob para o Firebase Storage
+        await uploadBytes(fileRef, fileBlob);
+
+        // Obtém a URL de download do arquivo recém-enviado
+        const url = await getDownloadURL(fileRef);
+
+        console.log("Imagem salva com sucesso:", url);
+        return url;
+    } catch (error) {
+        console.error("Erro ao fazer upload da imagem:", error);
+        throw error;
+    }
+}

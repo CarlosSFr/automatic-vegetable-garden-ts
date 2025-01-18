@@ -1,3 +1,4 @@
+import React from "react";
 import { ButtonTypeStyleProps, Container, Title } from "./styles";
 import { ActivityIndicator, TouchableOpacityProps } from "react-native";
 import { BookBookmark, Play } from "phosphor-react-native"
