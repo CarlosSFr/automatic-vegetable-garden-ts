@@ -51,6 +51,7 @@ export const ListTitleBox = styled.View`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 0px 0px 0px 4px;
     margin-bottom: 16px;
     margin-top: 16px;
 `
@@ -60,14 +61,23 @@ export const ListLeftContainer = styled.View`
 `
 
 export const LightContainer = styled.View`
-    position: absolute;
-    padding: 0px 30px;
-    margin-top: 16px;
-    width: 100%;
     flex-direction: row;
-    justify-content: flex-end;
     align-items: center;
     gap: 6px;
+`
+
+export const SensorsDataContainer = styled.View`
+    flex-direction: row;
+    margin-top: 16px;
+    flex: 1;
+    padding: 0px 30px 0px 30px;
+    align-items: center;
+    justify-content: space-between;
+`
+
+export const GeneralDataContainer = styled.View`
+    flex: 1;
+
 `
 
 export const PlantText = styled.Text`
@@ -79,7 +89,7 @@ export const PlantText = styled.Text`
 export const SunLightText = styled.Text`
     color: ${props => props.theme.colors.white};
     font-family: ${props => props.theme.font_family.bold};
-    font-size: ${props => props.theme.font_size.LLG}px;
+    font-size: ${props => props.theme.font_size.LG}px;
 `
 
 export const IdealText = styled.Text`

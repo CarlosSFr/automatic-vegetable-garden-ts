@@ -10,6 +10,8 @@ export default {
     red: '#F75A68',
     red_dark: '#AA2834',
 
+    blue_water: "#4E6BF8",
+
     gray_700: '#121214',
     gray_600: '#202024',
     gray_500: '#29292E',

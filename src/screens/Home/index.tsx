@@ -1,11 +1,13 @@
 import {
     Container,
+    GeneralDataContainer,
     IdealText,
     LightContainer,
     ListLeftContainer,
     ListTitleBox,
     PlantText,
     SensorBox,
+    SensorsDataContainer,
     SensorText,
     SunLightText,
     ValueBox,
@@ -31,13 +33,11 @@ type ModuleData = {
     temp: number;
     humid: number;
     tankLevel: number;
-    tempSoil: number;
     details: {
         title: string,
-        idealSoil: string,
         idealUmid: string,
         idealTemp: string,
-    }
+    };
 };
 
 type ModulesData = {
@@ -49,11 +49,11 @@ type ModulesData = {
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
 
-    const sensors: string[] = ["Temperatura", "Umidade", "Nível do Tanque", "Temperatura Solo"];
+    const sensors: string[] = ["Temperatura", "Umidade"];
     const [modulesData, setModulesData] = useState<ModulesData>({
-        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
-        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
-        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, details: { title: "", idealSoil: "", idealUmid: "", idealTemp: "" } },
+        moduleOne: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleThree: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
     });
     const [loading, setLoading] = useState<boolean>(true);
     const [lightSensor, setLightSensor] = useState<number>(0);
@@ -114,15 +114,11 @@ export function Home() {
     const iconMapping: Record<string, React.ElementType> = {
         "Temperatura": Thermometer,
         "Umidade": DropHalf,
-        "Nível do Tanque": Waves,
-        "Temperatura Solo": Thermometer,
     };
 
     const sensorMapping: Record<string, keyof ModuleData> = {
         "Temperatura": "temp",
         "Umidade": "humid",
-        "Nível do Tanque": "tankLevel",
-        "Temperatura Solo": "tempSoil",
     };
 
     const switchLed = (ledKey: string) => {
@@ -138,15 +134,51 @@ export function Home() {
             <HomeHeader />
             <ScrollView>
                 {lightSensor === 0 ? (
-                    <LightContainer>
-                        <SunDim color="yellow" weight="bold" size={20} />
-                        <SunLightText>Luz do Sol</SunLightText>
-                    </LightContainer>
+                    <GeneralDataContainer>
+                        <SensorsDataContainer>
+                            <LightContainer>
+                                <SunDim color="yellow" weight="bold" size={20} />
+                                <SunLightText>Luz do Sol</SunLightText>
+                            </LightContainer>
+                            <LightContainer>
+                                <Waves color={theme.colors.blue_water} weight="bold" size={20} />
+                                <SunLightText>Nível do tanque {modulesData.moduleOne.tankLevel}%</SunLightText>
+                            </LightContainer>
+                        </SensorsDataContainer>
+                        <SensorsDataContainer>
+                            <LightContainer>
+                                <DropHalf color={theme.colors.blue_water} weight="bold" size={20} />
+                                <SunLightText>Umidade {modulesData.moduleOne.humid}%</SunLightText>
+                            </LightContainer>
+                            <LightContainer>
+                                <Thermometer color={theme.colors.red_dark} weight="bold" size={20} />
+                                <SunLightText>Temperatura {modulesData.moduleOne.temp}ºC</SunLightText>
+                            </LightContainer>
+                        </SensorsDataContainer>
+                    </GeneralDataContainer>
                 ) : (
-                    <LightContainer>
-                        <LightbulbFilament color="#B20595" weight="bold" size={20} />
-                        <SunLightText>Indoor</SunLightText>
-                    </LightContainer>
+                    <GeneralDataContainer>
+                        <SensorsDataContainer>
+                            <LightContainer>
+                                <LightbulbFilament color="#B20595" weight="bold" size={20} />
+                                <SunLightText>Indoor</SunLightText>
+                            </LightContainer>
+                            <LightContainer>
+                                <Waves color={theme.colors.blue_water} weight="bold" size={20} />
+                                <SunLightText>Nível do tanque {modulesData.moduleOne.tankLevel}%</SunLightText>
+                            </LightContainer>
+                        </SensorsDataContainer>
+                        <SensorsDataContainer>
+                            <LightContainer>
+                                <DropHalf color={theme.colors.blue_water} weight="bold" size={20} />
+                                <SunLightText>Umidade {modulesData.moduleOne.humid}%</SunLightText>
+                            </LightContainer>
+                            <LightContainer>
+                                <Thermometer color={theme.colors.red_dark} weight="bold" size={20} />
+                                <SunLightText>Temperatura {modulesData.moduleOne.temp}ºC</SunLightText>
+                            </LightContainer>
+                        </SensorsDataContainer>
+                    </GeneralDataContainer>
                 )}
 
                 {Object.entries(modulesData).map(([moduleKey, moduleData], index) => (
@@ -167,14 +199,13 @@ export function Home() {
                             renderItem={({ item }) => {
                                 const Icon = iconMapping[item];
                                 const value = moduleData[sensorMapping[item]];
-                                const unit = item === "Temperatura" || item === "Temperatura Solo" ? "°C" : item === "Nível do Tanque" ? "%" : "";
-                                const isIdealInfo = item === "Temperatura" || item === "Umidade" || item === "Temperatura Solo";
+                                const unit = item === "Temperatura" ? "°C" : "";
+                                const isIdealInfo = item === "Temperatura" || item === "Umidade";
 
                                 // Definição do texto ideal
                                 const idealText =
                                     item === "Temperatura" ? `Temp. Ideal: ${moduleData.details.idealTemp}` :
-                                        item === "Temperatura Solo" ? `Temp. Ideal: ${moduleData.details.idealSoil}` :
-                                            item === "Umidade" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
+                                        item === "Umidade" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
 
                                 // Verifica se o valor é numérico (para garantir que não estamos tentando renderizar um objeto)
                                 const renderValue = typeof value === 'number' ? (
