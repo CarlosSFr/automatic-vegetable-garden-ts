@@ -1,6 +1,6 @@
 import { BookBookmark } from "phosphor-react-native";
 import { ButtonText, ButtonTypeStyleProps, ButtonsView, ModuleButton, ModuleContainer, ModuleText } from "./styles";
-import { FIREBASE_AUTH } from "../../../firebase";
+import { FIREBASE_AUTH } from "../../firebase/firebase";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";

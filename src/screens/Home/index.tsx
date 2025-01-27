@@ -24,10 +24,10 @@ import theme from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 
-import { FIREBASE_AUTH } from "../../../firebase";
-import { db, ref, onValue, storage } from "../../../firebase";
+import { FIREBASE_AUTH } from "../../firebase/firebase";
+import { db, ref, onValue, storage } from "../../firebase/firebase";
 import { set } from "firebase/database";
-import { getDownloadURL, ref as sRef } from 'firebase/storage';
+import { getDownloadURL, ref as sRef, uploadBytes } from 'firebase/storage';
 
 type ModuleData = {
     temp: number;
@@ -121,13 +121,58 @@ export function Home() {
         "Umidade": "humid",
     };
 
-    const switchLed = (ledKey: string) => {
+    // const switchLed = (ledKey: string) => {
+    //     const ledRef = ref(db, `/${ledKey}`);
+    //     onValue(ledRef, (snapshot) => {
+    //         const currentStatus = snapshot.val();
+    //         set(ledRef, currentStatus === 0 ? 1 : 0);
+    //     }, { onlyOnce: true });
+    // };
+
+    const switchLed = async (ledKey: string, moduleData: ModuleData) => {
         const ledRef = ref(db, `/${ledKey}`);
+        const now = new Date();
+        const timestamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString(); // Ajusta para UTC-3
+        const humidity = moduleData.humid; // Captura a umidade atual
+
+        // Obtém o estado atual do LED e alterna entre 0 e 1
         onValue(ledRef, (snapshot) => {
             const currentStatus = snapshot.val();
             set(ledRef, currentStatus === 0 ? 1 : 0);
         }, { onlyOnce: true });
+
+        const newEntry = {
+            timestamp,
+            humidity,
+            action: "Regar plantas",
+            module: ledKey,
+            name: moduleData.details.title,
+        };
+
+        try {
+            const historyRef = sRef(storage, "History/history.json");
+            let historyData = [];
+
+            try {
+                const url = await getDownloadURL(historyRef);
+                const response = await fetch(url);
+                historyData = await response.json();
+            } catch {
+                console.warn("Arquivo não encontrado. Criando novo histórico...");
+            }
+
+            historyData.push(newEntry);
+
+            const jsonString = JSON.stringify(historyData, null, 2);
+            const blob = new Blob([jsonString], { type: "application/json" });
+            await uploadBytes(historyRef, blob);
+
+            console.log("Histórico atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao atualizar o histórico:", error);
+        }
     };
+
 
     return (
         <ImageContainer source={bgImg}>
@@ -235,7 +280,7 @@ export function Home() {
                                 <Button
                                     title="Regar plantas"
                                     type="PLAY"
-                                    onPress={() => switchLed(`${moduleKey}/bomb`)}
+                                    onPress={() => switchLed(`${moduleKey}/bomb`, moduleData)}
                                     style={{ marginTop: 16, marginBottom: index === 2 ? 30 : 0 }}
                                 />
                             )}

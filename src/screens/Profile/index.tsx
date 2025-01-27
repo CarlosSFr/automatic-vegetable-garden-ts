@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
-import { FIREBASE_AUTH, uploadProfilePic } from "../../../firebase";
+import { FIREBASE_AUTH, uploadProfilePic } from "../../firebase/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import defaultPic from "./../../assets/user.png"

@@ -7,7 +7,7 @@ import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { useState } from "react";
-import { db, ref, onValue } from "../../../firebase";
+import { db, ref, onValue } from "../../firebase/firebase";
 import { set } from "firebase/database";
 
 export type DropProps = {

@@ -10,7 +10,7 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../../firebase";
+import { FIREBASE_AUTH } from "../../firebase/firebase";
 import Toast from "react-native-toast-message";
 
 type FormDataProps = {
@@ -53,7 +53,7 @@ export function SignUp() {
             });
         } catch (error: any) {
             // alert("Não foi possível criar sua conta: " + error.message)
-            if(error.message === "Firebase: Error (auth/email-already-in-use)."){
+            if (error.message === "Firebase: Error (auth/email-already-in-use).") {
                 Toast.show({
                     type: "error",
                     text1: "Erro!",

@@ -10,7 +10,7 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { FIREBASE_AUTH } from "../../../firebase";
+import { FIREBASE_AUTH } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Toast from "react-native-toast-message";
 
@@ -38,9 +38,9 @@ export function SignIn() {
     async function handleSignIn() {
         setLoading(true)
         try {
-           await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (error: any) {
-            if(error.message === "Firebase: Error (auth/invalid-credential)."){
+            if (error.message === "Firebase: Error (auth/invalid-credential).") {
                 Toast.show({
                     type: "error",
                     text1: "Erro!",

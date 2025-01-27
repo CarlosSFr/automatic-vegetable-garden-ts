@@ -1,19 +1,20 @@
 import { HistoryCardContainer, LeftContainer, SubtitleText, TimeText, TitleText } from "./styles";
 
-export function HistoryCard() {
+type HistoryCardProps = {
+    module: string;
+    name: string;
+    time: string;
+    humidity: number;
+};
+
+export function HistoryCard({ module, name, time, humidity }: HistoryCardProps) {
     return (
         <HistoryCardContainer>
             <LeftContainer>
-                <TitleText>
-                    Primeiro módulo
-                </TitleText>
-                <SubtitleText>
-                    Tomate cereja
-                </SubtitleText>
+                <TitleText>{name}</TitleText>
+                <SubtitleText>Umidade: {humidity}%</SubtitleText>
             </LeftContainer>
-            <TimeText>
-                08:52
-            </TimeText>
+            <TimeText>{time}</TimeText>
         </HistoryCardContainer>
-    )
+    );
 }

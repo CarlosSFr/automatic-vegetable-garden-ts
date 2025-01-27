@@ -3,7 +3,7 @@ import { AuthRoutes } from "./auth.routes";
 import { AppRoutes } from "./app.routes";
 import { useEffect, useState } from "react";
 import { User, onAuthStateChanged, updateCurrentUser, updateProfile } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../firebase";
+import { FIREBASE_AUTH } from "../firebase/firebase";
 import { Loading } from "../components/Loading";
 import { useUser } from "../hooks/useUser";
 
@@ -13,7 +13,7 @@ export function Routes() {
 
     useEffect(() => {
         onAuthStateChanged(FIREBASE_AUTH, (user) => {
-            if(user && user.displayName === null){
+            if (user && user.displayName === null) {
                 FIREBASE_AUTH.signOut();
             }
             // console.log(user)
@@ -21,14 +21,14 @@ export function Routes() {
             setLoading(false);
         });
     }, [])
-    if(loading || user?.displayName === null){
+    if (loading || user?.displayName === null) {
         return (
             <Loading />
         )
     }
     return (
         <NavigationContainer>
-            {user?
+            {user ?
                 <AppRoutes />
                 :
                 <AuthRoutes />

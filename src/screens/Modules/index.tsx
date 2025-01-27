@@ -12,7 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Input } from "../../components/Input";
 import { useModule } from "../../contexts/CyclesContext";
 import { getDownloadURL, ref as sRef, uploadBytes } from "firebase/storage";
-import { storage, uploadImageToPlantData } from "../../../firebase";
+import { storage, uploadImageToPlantData } from "../../firebase/firebase";
 import { Alert, TouchableOpacity } from "react-native";
 import { XSquare } from "phosphor-react-native";
 

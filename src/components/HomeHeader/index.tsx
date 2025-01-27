@@ -5,7 +5,7 @@ import { TouchableOpacity, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "../../routes/app.routes";
 import { StatusBar } from "expo-status-bar";
-import { FIREBASE_AUTH } from "../../../firebase";
+import { FIREBASE_AUTH } from "../../firebase/firebase";
 import defaultPic from "./../../assets/user.png"
 import { useCallback, useState } from "react";
 import { SignOut } from "phosphor-react-native"

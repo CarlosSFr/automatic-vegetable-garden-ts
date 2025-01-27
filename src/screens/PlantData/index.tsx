@@ -8,8 +8,8 @@ import { Container, DataContainer } from "./styles";
 
 import { useModule } from "../../contexts/CyclesContext";
 
-import { storage } from "../../../firebase";
-import { db, ref as dbRef } from "../../../firebase";
+import { storage } from "../../firebase/firebase";
+import { db, ref as dbRef } from "../../firebase/firebase";
 import { getDownloadURL, ref as sRef } from "firebase/storage";
 import { update } from "firebase/database";
 
