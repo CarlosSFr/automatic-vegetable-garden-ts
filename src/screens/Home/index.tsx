@@ -33,6 +33,8 @@ type ModuleData = {
     temp: number;
     humid: number;
     tankLevel: number;
+    tempSoil: number;
+    umidSoil: number;
     details: {
         title: string,
         idealUmid: string,
@@ -51,9 +53,9 @@ export function Home() {
 
     const sensors: string[] = ["Temperatura", "Umidade"];
     const [modulesData, setModulesData] = useState<ModulesData>({
-        moduleOne: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
-        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
-        moduleThree: { temp: 0, humid: 0, tankLevel: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
     });
     const [loading, setLoading] = useState<boolean>(true);
     const [lightSensor, setLightSensor] = useState<number>(0);
@@ -117,8 +119,8 @@ export function Home() {
     };
 
     const sensorMapping: Record<string, keyof ModuleData> = {
-        "Temperatura": "temp",
-        "Umidade": "humid",
+        "Temperatura": "tempSoil",
+        "Umidade": "umidSoil",
     };
 
     // const switchLed = (ledKey: string) => {
@@ -244,7 +246,7 @@ export function Home() {
                             renderItem={({ item }) => {
                                 const Icon = iconMapping[item];
                                 const value = moduleData[sensorMapping[item]];
-                                const unit = item === "Temperatura" ? "°C" : "";
+                                const unit = item === "Temperatura" ? "°C" : "%";
                                 const isIdealInfo = item === "Temperatura" || item === "Umidade";
 
                                 // Definição do texto ideal

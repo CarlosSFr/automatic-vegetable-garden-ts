@@ -1,56 +1,65 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { FlatList } from "react-native";
 import { BackHeader } from "../../components/BackHeader";
-import { DataCard } from "../../components/DataCard"; // Importa o DataCard otimizado
+import { DataCard } from "../../components/DataCard";
 import { ImageContainer } from "../SignIn/styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { Container, DataContainer } from "./styles";
 
 import { useModule } from "../../contexts/CyclesContext";
 
-import { storage } from "../../firebase/firebase";
-import { db, ref as dbRef } from "../../firebase/firebase";
-import { getDownloadURL, ref as sRef } from "firebase/storage";
-import { update } from "firebase/database";
+import { storage, db } from "../../firebase/firebase";
+import { ref as sRef, getDownloadURL } from "firebase/storage";
+import { ref as dbRef, onValue, update } from "firebase/database";
 
 export function PlantData() {
     const [plants, setPlants] = useState<any[]>([]);
     const { selectedModule } = useModule();
 
     useEffect(() => {
-        const fetchData = async () => {
+        // Função para buscar e ouvir dados em tempo real
+        const fetchAndListen = async () => {
             try {
-                // Referência ao arquivo JSON no Firebase Storage
+                // Referência ao JSON no Storage
                 const jsonRef = sRef(storage, "PlantData/data.json");
                 const jsonUrl = await getDownloadURL(jsonRef);
                 const jsonResponse = await fetch(jsonUrl);
                 const jsonData = await jsonResponse.json();
 
-                // Mapeia as plantas e tenta buscar as URLs das imagens
-                const plantsWithImages = await Promise.all(
-                    jsonData.plants.map(async (plant: any) => {
-                        try {
-                            const imageRef = sRef(storage, `PlantData/${plant.photo}`);
-                            const imageUrl = await getDownloadURL(imageRef);
+                // Listener para ouvir atualizações no Realtime Database
+                const plantsRef = dbRef(db, "PlantData");
+                onValue(plantsRef, async (snapshot) => {
+                    const realtimeData = snapshot.val();
 
-                            return {
-                                ...plant,
-                                imageUrl,
-                            };
-                        } catch {
-                            return null;
-                        }
-                    })
-                );
+                    // Combinar dados do JSON com os URLs das imagens
+                    const plantsWithImages = await Promise.all(
+                        jsonData.plants.map(async (plant: any) => {
+                            try {
+                                const imageRef = sRef(storage, `PlantData/${plant.photo}`);
+                                const imageUrl = await getDownloadURL(imageRef);
 
-                // Filtra plantas válidas
-                setPlants(plantsWithImages.filter((plant) => plant !== null));
+                                return {
+                                    ...plant,
+                                    imageUrl,
+                                };
+                            } catch {
+                                return null; // Ignorar plantas sem imagem
+                            }
+                        })
+                    );
+
+                    setPlants(plantsWithImages.filter((plant) => plant !== null));
+                });
             } catch (error) {
                 console.error("Erro ao acessar dados ou imagens:", error);
             }
         };
 
-        fetchData();
+        fetchAndListen();
+
+        return () => {
+            // Adicione lógica para remover listeners caso necessário
+        };
     }, []);
 
     // Função para adicionar planta ao módulo
@@ -74,7 +83,7 @@ export function PlantData() {
                 .then(() => console.log("Planta cadastrada com sucesso:", JSON.stringify(plantDetails)))
                 .catch((error) => console.error("Erro ao cadastrar planta:", error));
         },
-        [selectedModule] // Depende apenas do módulo selecionado
+        [selectedModule]
     );
 
     return (
@@ -91,13 +100,13 @@ export function PlantData() {
                                 title={item.title}
                                 umidadeIdeal={item.idealUmid}
                                 temperaturaIdeal={item.idealTemp}
-                                onAdd={() => handleAddPlant(item)} // Passa função estável
+                                onAdd={() => handleAddPlant(item)}
                             />
                         )}
-                        initialNumToRender={10} // Renderiza 10 itens inicialmente
-                        maxToRenderPerBatch={5} // Renderiza 5 itens por lote
-                        updateCellsBatchingPeriod={50} // Atualiza itens a cada 50ms
-                        windowSize={21} // Define o tamanho da janela de renderização
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={5}
+                        updateCellsBatchingPeriod={50}
+                        windowSize={21}
                         showsVerticalScrollIndicator={false}
                     />
                 </DataContainer>
