@@ -89,7 +89,7 @@ export const PlantText = styled.Text`
 export const SunLightText = styled.Text`
     color: ${props => props.theme.colors.white};
     font-family: ${props => props.theme.font_family.bold};
-    font-size: ${props => props.theme.font_size.LG}px;
+    font-size: ${props => props.theme.font_size.MD}px;
 `
 
 export const IdealText = styled.Text`

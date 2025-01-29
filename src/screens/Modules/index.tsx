@@ -13,11 +13,12 @@ import { Input } from "../../components/Input";
 import { useModule } from "../../contexts/CyclesContext";
 import { getDownloadURL, ref as sRef, uploadBytes } from "firebase/storage";
 import { storage, uploadImageToPlantData } from "../../firebase/firebase";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, ActivityIndicator } from "react-native";
 import { XSquare } from "phosphor-react-native";
 
-import * as ImagePicker from "expo-image-picker"
-import * as FileSystem from "expo-file-system"
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import Toast from "react-native-toast-message";
 
 interface PlantData {
     plantName: string;
@@ -29,8 +30,11 @@ interface PlantData {
 export function Modules() {
     const [isModalOpen, setModalOpen] = useState(false);
     const theme = useTheme();
+    const { setNeedsUpdate } = useModule(); // Usar o contexto
+    const [loadingImage, setLoadingImage] = useState(false);
+    const [savingConfig, setSavingConfig] = useState(false); // New state for button disabling
     const { setSelectedModule, selectedModule } = useModule();
-    const [plantPhoto, setPlantPhoto] = useState("")
+    const [plantPhoto, setPlantPhoto] = useState("");
     const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             plantName: "",
@@ -42,21 +46,14 @@ export function Modules() {
 
     async function updatePlantData(newPlant: any) {
         try {
-            // Referência ao arquivo JSON no Firebase Storage
             const jsonRef = sRef(storage, "PlantData/data.json");
-
-            // Baixa o arquivo JSON atual
             const jsonUrl = await getDownloadURL(jsonRef);
             const jsonResponse = await fetch(jsonUrl);
             const jsonData = await jsonResponse.json();
 
-            // Adiciona o novo item à lista de plantas
             const updatedPlants = [...jsonData.plants, newPlant];
-
-            // Atualiza o objeto JSON
             const updatedData = { plants: updatedPlants };
 
-            // Converte para string e faz o upload
             const blob = new Blob([JSON.stringify(updatedData)], { type: "application/json" });
             await uploadBytes(jsonRef, blob);
 
@@ -66,84 +63,91 @@ export function Modules() {
         }
     }
 
-    function saveConfiguration(data: PlantData) {
-        console.log("Dados salvos:", data);
+    async function saveConfiguration(data: PlantData) {
+        if (!plantPhoto) {
+            Alert.alert("Atenção", "Por favor, selecione uma imagem antes de salvar.");
+            return;
+        }
 
-        // Cria o objeto da nova planta
         const newPlant = {
             title: data.plantName,
             idealUmid: data.plantUmidity,
             idealTemp: data.plantTemperature,
             idealSoil: data.plantSoilTemp,
-            photo: plantPhoto, // Usa a URL da imagem enviada
+            photo: plantPhoto,
         };
 
-        // Atualiza o arquivo JSON no Firebase Storage
-        updatePlantData(newPlant);
+        setSavingConfig(true); // Disable button
 
-        reset(); // Reseta os campos do formulário
-        closeModal(); // Fecha o modal
+        try {
+            await updatePlantData(newPlant);
+            console.log("Planta salva com sucesso no JSON!");
+            reset();
+            closeModal();
+            setNeedsUpdate(true);
+        } catch (error) {
+            console.error("Erro ao salvar planta:", error);
+            Alert.alert("Erro", "Não foi possível salvar os dados. Tente novamente.");
+        } finally {
+            setSavingConfig(false); // Re-enable button
+        }
     }
 
-
     function configurePlantation1() {
-        setModalOpen(true); // Abre o modal
+        setModalOpen(true);
         setSelectedModule("moduleOne");
-        //console.log("Selected module atualizado:", "moduleOne");
     }
 
     function closeModal() {
-        //console.log("Modal fechado para o módulo:", selectedModule);
         setModalOpen(false);
     }
 
     function configurePlantation2() {
-        setModalOpen(true); // Abre o modal
+        setModalOpen(true);
         setSelectedModule("moduleTwo");
-        //console.log("Selected module atualizado:", "moduleTwo");
     }
 
     function configurePlantation3() {
-        setModalOpen(true); // Abre o modal
+        setModalOpen(true);
         setSelectedModule("moduleThree");
-        //console.log("Selected module atualizado:", "moduleThree");
     }
 
-    useEffect(() => {
-        //console.log("Selected module atualizado:", selectedModule);
-    }, [selectedModule]);
+    useEffect(() => { }, [selectedModule]);
 
     async function handlePhotoSelect() {
-        const photoSelected = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-            aspect: [4, 4],
-            allowsEditing: true,
-        });
+        try {
+            const photoSelected = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+                allowsEditing: true,
+                aspect: [4, 4],
+            });
 
-        if (photoSelected.canceled) {
-            return;
-        }
-
-        if (photoSelected.assets[0].uri) {
-            const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri);
-
-            if (photoInfo.exists && (photoInfo.size / 1024 / 1024) > 5) {
-                return Alert.alert("Escolha uma imagem de até 5MB");
+            if (photoSelected.canceled) {
+                return;
             }
 
-            try {
-                // Define o nome da imagem como o nome da planta em minúsculo e sem espaços
-                const imageName = `${(selectedModule ?? "defaultModule").toLowerCase().replace(/\s+/g, "_")}_${new Date().getTime()}.jpg`;
+            if (photoSelected.assets && photoSelected.assets[0].uri) {
+                setLoadingImage(true);
 
-                // Faz o upload da imagem para o Firebase Storage
-                const photoUrl = await uploadImageToPlantData(photoSelected.assets[0].uri, imageName);
+                const photoUri = photoSelected.assets[0].uri;
+                const fileName = `${(selectedModule ?? "defaultModule").toLowerCase().replace(/\s+/g, "_")}_${new Date().getTime()}.jpg`;
 
-                setPlantPhoto(imageName);
-                Alert.alert("Imagem enviada com sucesso!");
-            } catch (error) {
-                Alert.alert("Erro ao enviar a imagem", (error as Error).message);
+                const photoUrl = await uploadImageToPlantData(photoUri, fileName);
+
+                setPlantPhoto(fileName);
+                Toast.show({
+                    type: "success",
+                    text1: "Sucesso!",
+                    text2: "Imagem enviada com sucesso!",
+                    visibilityTime: 1500,
+                    position: "top"
+                });
             }
+        } catch (error) {
+            Alert.alert("Erro ao enviar a imagem", (error as Error).message);
+        } finally {
+            setLoadingImage(false);
         }
     }
 
@@ -165,28 +169,20 @@ export function Modules() {
             </ModuleCardContainer>
 
             <Modal
-                isOpen={isModalOpen} // Controle de visibilidade
-                onRequestClose={closeModal} // Fecha o modal ao pressionar fora ou ao usar o botão "voltar"
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
             >
                 <ModalContainer>
                     <TitleAndCloseContainer>
                         <ModalText>
                             Configuração da {selectedModule === "moduleOne" ? "Plantação 1" : selectedModule === "moduleTwo" ? "Plantação 2" : "Plantação 3"}
                         </ModalText>
-                        <TouchableOpacity
-                            onPress={closeModal}
-                        >
-                            <XSquare
-                                size={32}
-                                color={theme.colors.red_dark}
-                                weight="fill"
-                            />
+                        <TouchableOpacity onPress={closeModal}>
+                            <XSquare size={32} color={theme.colors.red_dark} weight="fill" />
                         </TouchableOpacity>
                     </TitleAndCloseContainer>
                     <ModalFormContainer>
-                        <ModalFormTitles>
-                            Nome da Planta
-                        </ModalFormTitles>
+                        <ModalFormTitles>Nome da Planta</ModalFormTitles>
                         <Controller
                             control={control}
                             name="plantName"
@@ -200,9 +196,7 @@ export function Modules() {
                             )}
                         />
 
-                        <ModalFormTitles>
-                            Umidade ideal
-                        </ModalFormTitles>
+                        <ModalFormTitles>Umidade ideal</ModalFormTitles>
                         <Controller
                             control={control}
                             name="plantUmidity"
@@ -216,9 +210,7 @@ export function Modules() {
                             )}
                         />
 
-                        <ModalFormTitles>
-                            Temperatura ideal
-                        </ModalFormTitles>
+                        <ModalFormTitles>Temperatura ideal</ModalFormTitles>
                         <Controller
                             control={control}
                             name="plantTemperature"
@@ -232,9 +224,7 @@ export function Modules() {
                             )}
                         />
 
-                        <ModalFormTitles>
-                            Temperatura ideal do solo
-                        </ModalFormTitles>
+                        <ModalFormTitles>Temperatura ideal do solo</ModalFormTitles>
                         <Controller
                             control={control}
                             name="plantSoilTemp"
@@ -249,14 +239,17 @@ export function Modules() {
                         />
 
                         <TouchableOpacity>
-                            <SaveImageButton
-                                onPress={handlePhotoSelect}
-                            >
+                            <SaveImageButton onPress={handlePhotoSelect}>
                                 Salvar imagem
                             </SaveImageButton>
                         </TouchableOpacity>
                     </ModalFormContainer>
-                    <Button title="Salvar configuração" onPress={handleSubmit(saveConfiguration)} />
+                    <Button
+                        title="Salvar configuração"
+                        onPress={handleSubmit(saveConfiguration)}
+                        disabled={savingConfig || loadingImage || !plantPhoto} // Botão desativado enquanto carrega ou salva
+                        loading={savingConfig || loadingImage} // Exibe indicador de carregamento
+                    />
                 </ModalContainer>
             </Modal>
         </ImageContainer>
