@@ -47,7 +47,7 @@ export function ModuleCard({ title, onConfigure }: Props) {
                     onPress={onConfigure} // Função para o botão Configurar
                 >
                     <ButtonText>
-                        Configurar
+                        Cadastrar
                     </ButtonText>
                 </ModuleButton>
                 <ModuleButton
@@ -61,7 +61,7 @@ export function ModuleCard({ title, onConfigure }: Props) {
                         weight="bold"
                     />
                     <ButtonText>
-                        Cadastrar
+                        Selecionar
                     </ButtonText>
                 </ModuleButton>
             </ButtonsView>

@@ -51,7 +51,7 @@ type ModulesData = {
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
 
-    const sensors: string[] = ["Temperatura", "Umidade"];
+    const sensors: string[] = ["Temperatura do Solo", "Umidade do Solo"];
     const [modulesData, setModulesData] = useState<ModulesData>({
         moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
         moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
@@ -114,13 +114,13 @@ export function Home() {
     }, [modulesData.moduleOne.humid]);
 
     const iconMapping: Record<string, React.ElementType> = {
-        "Temperatura": Thermometer,
-        "Umidade": DropHalf,
+        "Temperatura do Solo": Thermometer,
+        "Umidade do Solo": DropHalf,
     };
 
     const sensorMapping: Record<string, keyof ModuleData> = {
-        "Temperatura": "tempSoil",
-        "Umidade": "umidSoil",
+        "Temperatura do Solo": "tempSoil",
+        "Umidade do Solo": "umidSoil",
     };
 
     // const switchLed = (ledKey: string) => {
@@ -246,13 +246,13 @@ export function Home() {
                             renderItem={({ item }) => {
                                 const Icon = iconMapping[item];
                                 const value = moduleData[sensorMapping[item]];
-                                const unit = item === "Temperatura" ? "°C" : "%";
-                                const isIdealInfo = item === "Temperatura" || item === "Umidade";
+                                const unit = item === "Temperatura do Solo" ? "°C" : "%";
+                                const isIdealInfo = item === "Temperatura do Solo" || item === "Umidade do Solo";
 
                                 // Definição do texto ideal
                                 const idealText =
-                                    item === "Temperatura" ? `Temp. Ideal: ${moduleData.details.idealTemp}` :
-                                        item === "Umidade" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
+                                    item === "Temperatura do Solo" ? `Temp. Ideal: ${moduleData.details.idealTemp}` :
+                                        item === "Umidade do Solo" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
 
                                 // Verifica se o valor é numérico (para garantir que não estamos tentando renderizar um objeto)
                                 const renderValue = typeof value === 'number' ? (

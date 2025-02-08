@@ -12,7 +12,7 @@ export function HistoryCard({ module, name, time, humidity }: HistoryCardProps) 
         <HistoryCardContainer>
             <LeftContainer>
                 <TitleText>{name}</TitleText>
-                <SubtitleText>Umidade: {humidity}%</SubtitleText>
+                <SubtitleText>Umidade do solo: {humidity}%</SubtitleText>
             </LeftContainer>
             <TimeText>{time}</TimeText>
         </HistoryCardContainer>

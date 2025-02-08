@@ -19,6 +19,7 @@ bool firebaseConectado = false;
 
 // Configuração da tela TFT
 TFT_eSPI tft = TFT_eSPI();
+#define VERDE_ESCURO 0x04004 // Definição da cor verde escuro no formato RGB565
 
 void connectToWiFi() {
   Serial.print("Conectando ao Wi-Fi...");
@@ -57,9 +58,9 @@ void setup() {
   // Inicializar tela TFT
   tft.init();
   tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  tft.setTextSize(2);
+  tft.fillScreen(VERDE_ESCURO);  // Aplica o fundo verde escuro
+  tft.setTextColor(TFT_WHITE, VERDE_ESCURO);  // Texto branco sobre fundo verde escuro
+  tft.setTextFont(2);
 
   // Conectar ao Wi-Fi
   connectToWiFi();
@@ -68,20 +69,38 @@ void setup() {
   connectToFirebase();
 }
 
-void exibirDadosNaTela(float temperatura, float umidade, float umidSoil) {
-  tft.fillScreen(TFT_BLACK); // Limpa a tela
-  tft.setCursor(10, 30);
-  tft.print("Temperatura: " + String(temperatura) + "C");
+void exibirDadosNaTela(float temperatura, float umidSoil) {
+  tft.fillScreen(VERDE_ESCURO); // Limpa a tela mantendo o fundo verde escuro
 
+  tft.drawLine(0, 20, 319, 20, 0x1000);  
+
+  tft.setCursor(10, 30);
+  tft.print("Temp. solo modulo 1: " + String(temperatura) + "C");
   tft.setCursor(10, 60);
-  tft.print("Umidade: " + String(umidade) + "%");
+  tft.print("Umid. solo modulo 1: " + String(umidSoil) + "%");
+
+  // Linha de separação - Ocupa toda a largura da tela (0 a 319)
+  tft.drawLine(0, 80, 319, 80, 0x1000);  
 
   tft.setCursor(10, 90);
-  tft.print("Umid. Solo: " + String(umidSoil) + "%");
+  tft.print("Temp. solo modulo 2: " + String(temperatura) + "C");
+  tft.setCursor(10, 120);
+  tft.print("Umid. solo modulo 2: " + String(umidSoil) + "%");
+
+  // Linha de separação
+  tft.drawLine(0, 140, 319, 140, TFT_BLACK);  
+
+  tft.setCursor(10, 150);
+  tft.print("Temp. solo modulo 3: " + String(temperatura) + "C");
+  tft.setCursor(10, 180);
+  tft.print("Umid. solo modulo 3: " + String(umidSoil) + "%");
+
+  // Linha de separação final
+  tft.drawLine(0, 200, 319, 200, TFT_BLACK);  
 }
 
 void loop() {
-  float temperatura = 0, umidade = 0, umidSoil = 0;
+  float temperaturaOne = 0, umidSoilOne = 0;
 
   // Revalidar conexão com Wi-Fi se cair
   if (WiFi.status() != WL_CONNECTED) {
@@ -97,31 +116,23 @@ void loop() {
   }
 
   // Ler temperatura
-  if (Firebase.RTDB.getFloat(&fbdo, "moduleOne/temp")) {
-    temperatura = fbdo.floatData();
-    Serial.println("Temperatura: " + String(temperatura) + "C");
+  if (Firebase.RTDB.getFloat(&fbdo, "moduleOne/tempSoil")) {
+    temperaturaOne = fbdo.floatData();
+    Serial.println("Temperatura: " + String(temperaturaOne) + "C");
   } else {
     Serial.println("Erro ao obter temperatura: " + fbdo.errorReason());
   }
 
-  // Ler umidade
-  if (Firebase.RTDB.getFloat(&fbdo, "moduleOne/humid")) {
-    umidade = fbdo.floatData();
-    Serial.println("Umidade: " + String(umidade) + "%");
-  } else {
-    Serial.println("Erro ao obter umidade: " + fbdo.errorReason());
-  }
-
   // Ler umidade do solo
   if (Firebase.RTDB.getFloat(&fbdo, "moduleOne/umidSoil")) {
-    umidSoil = fbdo.floatData();
-    Serial.println("Umidade do Solo: " + String(umidSoil) + "%");
+    umidSoilOne = fbdo.floatData();
+    Serial.println("Umidade do Solo: " + String(umidSoilOne) + "%");
   } else {
     Serial.println("Erro ao obter umidade do solo: " + fbdo.errorReason());
   }
 
   // Exibir os valores na tela TFT
-  exibirDadosNaTela(temperatura, umidade, umidSoil);
+  exibirDadosNaTela(temperaturaOne, umidSoilOne);
 
   delay(5000); // Atualiza a cada 5 segundos
 }
