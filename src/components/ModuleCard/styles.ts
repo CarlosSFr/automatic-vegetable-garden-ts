@@ -1,5 +1,5 @@
 import { TouchableOpacity } from "react-native";
-import styled, {css} from "styled-components/native";
+import styled, { css } from "styled-components/native";
 
 export type ButtonTypeStyleProps = "true" | "false";
 
@@ -28,7 +28,7 @@ export const ButtonsView = styled.View`
     gap: 14px;
 `
 
-export const ModuleButton = styled(TouchableOpacity)<Props>`
+export const ModuleButton = styled(TouchableOpacity) <Props>`
     border-radius: 6px;
     justify-content: center;
     align-items: center;
@@ -36,14 +36,10 @@ export const ModuleButton = styled(TouchableOpacity)<Props>`
     width: 48%;
     padding: 8px;
     gap: 4px;
-    background-color: ${({theme, type}) => type === "true" ?
-    theme.colors.green_700
-    :
-    theme.colors.gray_600      
-}
-
-    
+    background-color: ${props => props.theme.colors.green_700}; 
 `
+
+
 export const ButtonText = styled.Text`
     font-size: ${props => props.theme.font_size.SSM}px;
     font-weight: bold;

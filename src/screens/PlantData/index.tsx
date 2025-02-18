@@ -91,7 +91,7 @@ export function PlantData() {
                                 adress={item.imageUrl}
                                 title={item.title}
                                 umidadeIdeal={item.idealUmid}
-                                temperaturaIdeal={item.idealTemp}
+                                temperaturaIdeal={item.idealSoil}
                                 onAdd={() => handleAddPlant(item)} // Passa função estável
                             />
                         )}

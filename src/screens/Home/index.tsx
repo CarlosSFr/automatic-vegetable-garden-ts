@@ -15,7 +15,7 @@ import {
 } from "./styles";
 import bgImg from "./../../assets/bg-img-dark.png";
 import { HomeHeader } from "../../components/HomeHeader";
-import { ActivityIndicator, FlatList, ScrollView } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import { ImageContainer } from "./styles";
 import { Button } from "../../components/Button";
 import { useEffect, useState } from "react";
@@ -38,7 +38,8 @@ type ModuleData = {
     details: {
         title: string,
         idealUmid: string,
-        idealTemp: string,
+        idealSoil: string,
+        idealTemp: number,
     };
 };
 
@@ -51,11 +52,11 @@ type ModulesData = {
 export function Home() {
     const navigation = useNavigation<AppNavigationRoutesProps>();
 
-    const sensors: string[] = ["Temperatura do Solo", "Umidade do Solo"];
+    const sensors: string[] = ["Temp. do Solo", "Umidade do Solo"];
     const [modulesData, setModulesData] = useState<ModulesData>({
-        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
-        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
-        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealTemp: "" } },
+        moduleOne: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealSoil: "", idealTemp: 0 } },
+        moduleTwo: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealSoil: "", idealTemp: 0 } },
+        moduleThree: { temp: 0, humid: 0, tankLevel: 0, tempSoil: 0, umidSoil: 0, details: { title: "", idealUmid: "", idealSoil: "", idealTemp: 0 } },
     });
     const [loading, setLoading] = useState<boolean>(true);
     const [lightSensor, setLightSensor] = useState<number>(0);
@@ -106,52 +107,109 @@ export function Home() {
     }, []);
 
     useEffect(() => {
-        if (modulesData.moduleOne.humid > 60) {
-            setLightSensor(1); // Atualiza o lightSensor para "Indoor"
-        } else {
-            setLightSensor(0); // Define o lightSensor para "Luz do Sol"
-        }
-    }, [modulesData.moduleOne.humid]);
+        const relayRef = ref(db, `/relayStatus`);
+        const uvRef = ref(db, `/uvLight`);
+
+        onValue(uvRef, (snapshot) => {
+            const uvData = snapshot.val();
+            if (uvData > 3) {
+                set(relayRef, 1);
+                setLightSensor(1);
+            } else {
+                set(relayRef, 0);
+                setLightSensor(0);
+            }
+        })
+
+    }, []);
+
+    // useEffect(() => {
+
+    //     if(modulesData.moduleOne.umidSoil < modulesData.moduleOne.details.idealTemp){
+    //         switchLed(`${moduleKey}/bomb`, moduleData)
+    //     }
+
+    // }, [modulesData.moduleOne.umidSoil, modulesData.moduleTwo.umidSoil, modulesData.moduleThree.umidSoil]);
 
     const iconMapping: Record<string, React.ElementType> = {
-        "Temperatura do Solo": Thermometer,
+        "Temp. do Solo": Thermometer,
         "Umidade do Solo": DropHalf,
     };
 
     const sensorMapping: Record<string, keyof ModuleData> = {
-        "Temperatura do Solo": "tempSoil",
+        "Temp. do Solo": "tempSoil",
         "Umidade do Solo": "umidSoil",
     };
 
-    // const switchLed = (ledKey: string) => {
+    // const switchLed = async (ledKey: string, moduleData: ModuleData) => {
     //     const ledRef = ref(db, `/${ledKey}`);
+    //     const now = new Date();
+    //     const timestamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString(); // Ajusta para UTC-3
+    //     const humidity = moduleData.humid; // Captura a umidade atual
+
+    //     // Obtém o estado atual do LED e alterna entre 0 e 1
     //     onValue(ledRef, (snapshot) => {
     //         const currentStatus = snapshot.val();
     //         set(ledRef, currentStatus === 0 ? 1 : 0);
+
     //     }, { onlyOnce: true });
+
+    //     const newEntry = {
+    //         timestamp,
+    //         humidity,
+    //         action: "Regar plantas",
+    //         module: ledKey,
+    //         name: moduleData.details.title,
+    //     };
+
+    //     try {
+    //         const historyRef = sRef(storage, "History/history.json");
+    //         let historyData = [];
+
+    //         try {
+    //             const url = await getDownloadURL(historyRef);
+    //             const response = await fetch(url);
+    //             historyData = await response.json();
+    //         } catch {
+    //             console.warn("Arquivo não encontrado. Criando novo histórico...");
+    //         }
+
+    //         historyData.push(newEntry);
+
+    //         const jsonString = JSON.stringify(historyData, null, 2);
+    //         const blob = new Blob([jsonString], { type: "application/json" });
+    //         await uploadBytes(historyRef, blob);
+
+    //         console.log("Histórico atualizado com sucesso!");
+    //     } catch (error) {
+    //         console.error("Erro ao atualizar o histórico:", error);
+    //     }
     // };
 
     const switchLed = async (ledKey: string, moduleData: ModuleData) => {
         const ledRef = ref(db, `/${ledKey}`);
         const now = new Date();
-        const timestamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString(); // Ajusta para UTC-3
-        const humidity = moduleData.humid; // Captura a umidade atual
-
-        // Obtém o estado atual do LED e alterna entre 0 e 1
-        onValue(ledRef, (snapshot) => {
-            const currentStatus = snapshot.val();
-            set(ledRef, currentStatus === 0 ? 1 : 0);
-        }, { onlyOnce: true });
-
-        const newEntry = {
-            timestamp,
-            humidity,
-            action: "Regar plantas",
-            module: ledKey,
-            name: moduleData.details.title,
-        };
+        const timestamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString();
+        const humidity = moduleData.humid;
 
         try {
+            // Define o LED como 1 (ligado)
+            await set(ledRef, 1);
+
+            // Aguarda 1 segundo
+            setTimeout(async () => {
+                // Define o LED de volta para 0 (desligado)
+                await set(ledRef, 0);
+            }, 8000);
+
+            const newEntry = {
+                timestamp,
+                humidity,
+                action: "Regar plantas",
+                module: ledKey,
+                name: moduleData.details.title,
+            };
+
             const historyRef = sRef(storage, "History/history.json");
             let historyData = [];
 
@@ -174,7 +232,6 @@ export function Home() {
             console.error("Erro ao atualizar o histórico:", error);
         }
     };
-
 
     return (
         <ImageContainer source={bgImg}>
@@ -246,12 +303,12 @@ export function Home() {
                             renderItem={({ item }) => {
                                 const Icon = iconMapping[item];
                                 const value = moduleData[sensorMapping[item]];
-                                const unit = item === "Temperatura do Solo" ? "°C" : "%";
-                                const isIdealInfo = item === "Temperatura do Solo" || item === "Umidade do Solo";
+                                const unit = item === "Temp. do Solo" ? "°C" : "%";
+                                const isIdealInfo = item === "Temp. do Solo" || item === "Umidade do Solo";
 
                                 // Definição do texto ideal
                                 const idealText =
-                                    item === "Temperatura do Solo" ? `Temp. Ideal: ${moduleData.details.idealTemp}` :
+                                    item === "Temp. do Solo" ? `Temp. Ideal: ${moduleData.details.idealSoil}` :
                                         item === "Umidade do Solo" ? `Umid. Ideal: ${moduleData.details.idealUmid}` : "";
 
                                 // Verifica se o valor é numérico (para garantir que não estamos tentando renderizar um objeto)

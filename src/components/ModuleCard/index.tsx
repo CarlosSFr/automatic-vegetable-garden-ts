@@ -13,7 +13,7 @@ type Props = {
 };
 
 export function ModuleCard({ title, onConfigure }: Props) {
-    const [disabled, setDisabled] = useState(false);
+    // const [disabled, setDisabled] = useState(false);
     const { setSelectedModule } = useModule();
     const navigation = useNavigation<AppNavigationRoutesProps>();
 
@@ -22,19 +22,19 @@ export function ModuleCard({ title, onConfigure }: Props) {
         navigation.navigate("plantData");
     }
 
-    useEffect(() => {
-        const user = FIREBASE_AUTH.currentUser;
-        if (user && user.email !== "carlos@email.com") {
-            setDisabled(true);
-            Toast.show({
-                type: "error",
-                text1: "Banco de dados bloqueado.",
-                text2: "Função para usuário premium!",
-                visibilityTime: 2000,
-                position: "bottom",
-            });
-        }
-    }, []);
+    // useEffect(() => {
+    //     const user = FIREBASE_AUTH.currentUser;
+    //     if (user && user.email !== "carlos@email.com") {
+    //         setDisabled(true);
+    //         Toast.show({
+    //             type: "error",
+    //             text1: "Banco de dados bloqueado.",
+    //             text2: "Função para usuário premium!",
+    //             visibilityTime: 2000,
+    //             position: "bottom",
+    //         });
+    //     }
+    // }, []);
 
     return (
         <ModuleContainer>
@@ -51,8 +51,8 @@ export function ModuleCard({ title, onConfigure }: Props) {
                     </ButtonText>
                 </ModuleButton>
                 <ModuleButton
-                    type={disabled ? "false" : "true"}
-                    disabled={disabled}
+                    // type={disabled ? "false" : "true"}
+                    // disabled={disabled}
                     onPress={handleUserPermission}
                 >
                     <BookBookmark
