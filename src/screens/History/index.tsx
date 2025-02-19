@@ -7,7 +7,6 @@ import { TextHeader } from "../../components/TextHeader";
 import { Container, ListEmptyText, SectionHeader } from "./styles";
 import { HistoryCard } from "../../components/HistoryCard";
 import { SectionList, ActivityIndicator } from "react-native";
-import moment from "moment-timezone"; // Certifique-se de instalar: npm install moment-timezone
 
 type HistoryEntry = {
     timestamp: string;
@@ -51,7 +50,12 @@ export function History() {
             }
 
             const groupedData = historyData.reduce((acc, entry) => {
-                const date = moment.utc(entry.timestamp).tz("America/Sao_Paulo").format("DD/MM/YYYY");
+                const date = new Date(entry.timestamp).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                });
+
                 if (!acc[date]) {
                     acc[date] = [];
                 }
@@ -59,11 +63,17 @@ export function History() {
                 return acc;
             }, {} as Record<string, HistoryEntry[]>);
 
+            // Ordena os itens dentro de cada data pelo timestamp mais recente primeiro
+            Object.keys(groupedData).forEach(date => {
+                groupedData[date].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            });
+
+            // Ordena as seções por data mais recente primeiro
             const sections = Object.entries(groupedData)
                 .sort(([dateA], [dateB]) => {
-                    const parsedDateA = moment(dateA, "DD/MM/YYYY").toDate();
-                    const parsedDateB = moment(dateB, "DD/MM/YYYY").toDate();
-                    return parsedDateB.getTime() - parsedDateA.getTime();
+                    const parsedDateA = new Date(dateA.split("/").reverse().join("-"));
+                    const parsedDateB = new Date(dateB.split("/").reverse().join("-"));
+                    return parsedDateB.getTime() - parsedDateA.getTime(); // Decrescente
                 })
                 .map(([date, data]) => ({
                     title: date,
@@ -77,6 +87,7 @@ export function History() {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchHistory();

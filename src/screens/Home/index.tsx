@@ -190,7 +190,7 @@ export function Home() {
         const ledRef = ref(db, `/${ledKey}`);
         const now = new Date();
         const timestamp = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString();
-        const humidity = moduleData.humid;
+        const humidity = moduleData.umidSoil;
 
         try {
             // Define o LED como 1 (ligado)
