@@ -2,7 +2,7 @@ import { Container, ForgotPass, ImageContainer, Register, Subtitle, Title } from
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigationRoutesProps } from "../../routes/auth.routes";
 import { Controller, useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FIREBASE_AUTH } from "../../firebase/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import Toast from "react-native-toast-message";
 
 type FormSignInProps = {
@@ -51,6 +51,38 @@ export function SignIn() {
             }
         } finally {
             setLoading(false)
+        }
+    }
+
+    async function handleForgotPassword() {
+        if (!email) {
+            Toast.show({
+                type: "error",
+                text1: "Erro!",
+                text2: "Por favor, informe o e-mail.",
+                visibilityTime: 2000,
+                position: "bottom"
+            });
+            return;
+        }
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            Toast.show({
+                type: "success",
+                text1: "Sucesso!",
+                text2: "E-mail de recuperação enviado.",
+                visibilityTime: 2000,
+                position: "bottom"
+            });
+        } catch (error: any) {
+            Toast.show({
+                type: "error",
+                text1: "Erro!",
+                text2: "Não foi possível enviar o e-mail de recuperação.",
+                visibilityTime: 2000,
+                position: "bottom"
+            });
         }
     }
 
@@ -114,9 +146,14 @@ export function SignIn() {
                         </Text>
                     )}
 
-                    <ForgotPass>
-                        Esqueceu sua senha?
-                    </ForgotPass>
+                    <TouchableOpacity
+                        style={{ alignSelf: "flex-end" }}
+                        onPress={handleForgotPassword}
+                    >
+                        <ForgotPass>
+                            Esqueceu sua senha?
+                        </ForgotPass>
+                    </TouchableOpacity>
                     <Button
                         title="Login"
                         onPress={handleSubmit(handleSignIn)}

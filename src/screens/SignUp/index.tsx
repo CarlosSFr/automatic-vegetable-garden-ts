@@ -1,9 +1,8 @@
 import { ImageContainer, Subtitle } from "../SignIn/styles";
-import { ButtonContainer, Container, GoogleButton, GoogleButtonText, SideLines, SmallText, StyleContainer } from "./styles";
+import { ButtonContainer, Container } from "./styles";
 import imgBg from "./../../assets/bg-img.png"
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { GoogleLogo } from "phosphor-react-native"
 import { Controller, useForm } from "react-hook-form"
 import { ScrollView, Text } from "react-native";
 import * as yup from "yup"
@@ -161,17 +160,6 @@ export function SignUp() {
                             loading={loading}
                         />
                     </ButtonContainer>
-                    <StyleContainer>
-                        <SideLines />
-                        <SmallText>
-                            Ou
-                        </SmallText>
-                        <SideLines />
-                    </StyleContainer>
-                    <GoogleButton>
-                        <GoogleLogo size={32} color="white" />
-                        <GoogleButtonText>Faça login com Google</GoogleButtonText>
-                    </GoogleButton>
                 </Container>
             </ScrollView>
 

@@ -7,6 +7,7 @@ import { TextHeader } from "../../components/TextHeader";
 import { Container, ListEmptyText, SectionHeader } from "./styles";
 import { HistoryCard } from "../../components/HistoryCard";
 import { SectionList, ActivityIndicator } from "react-native";
+import moment from "moment-timezone"; // Certifique-se de instalar: npm install moment-timezone
 
 type HistoryEntry = {
     timestamp: string;
@@ -25,20 +26,32 @@ export function History() {
     const [modules, setModules] = useState<SectionData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // Função para buscar e processar o histórico
     const fetchHistory = async () => {
         try {
             const historyRef = sRef(storage, "History/history.json");
-            const url = await getDownloadURL(historyRef);
+
+            let url;
+            try {
+                url = await getDownloadURL(historyRef);
+            } catch (error: any) {
+                if (error.code === "storage/object-not-found") {
+                    console.log("Arquivo history.json não encontrado.");
+                    setModules([]);
+                    return;
+                }
+                throw error;
+            }
+
             const response = await fetch(url);
             const historyData: HistoryEntry[] = await response.json();
 
+            if (!Array.isArray(historyData) || historyData.length === 0) {
+                setModules([]);
+                return;
+            }
+
             const groupedData = historyData.reduce((acc, entry) => {
-                const date = new Date(entry.timestamp).toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                });
+                const date = moment.utc(entry.timestamp).tz("America/Sao_Paulo").format("DD/MM/YYYY");
                 if (!acc[date]) {
                     acc[date] = [];
                 }
@@ -46,12 +59,11 @@ export function History() {
                 return acc;
             }, {} as Record<string, HistoryEntry[]>);
 
-            // Ordena as seções em ordem decrescente de data
             const sections = Object.entries(groupedData)
                 .sort(([dateA], [dateB]) => {
-                    const parsedDateA = new Date(dateA.split('/').reverse().join('-'));
-                    const parsedDateB = new Date(dateB.split('/').reverse().join('-'));
-                    return parsedDateB.getTime() - parsedDateA.getTime(); // Decrescente
+                    const parsedDateA = moment(dateA, "DD/MM/YYYY").toDate();
+                    const parsedDateB = moment(dateB, "DD/MM/YYYY").toDate();
+                    return parsedDateB.getTime() - parsedDateA.getTime();
                 })
                 .map(([date, data]) => ({
                     title: date,
@@ -67,13 +79,8 @@ export function History() {
     };
 
     useEffect(() => {
-        // Primeira chamada para buscar o histórico
         fetchHistory();
-
-        // Configurar intervalo para buscar atualizações a cada 10 segundos
-        const interval = setInterval(fetchHistory, 10000); // 10 segundos
-
-        // Limpar o intervalo quando o componente for desmontado
+        const interval = setInterval(fetchHistory, 10000);
         return () => clearInterval(interval);
     }, []);
 
@@ -91,11 +98,7 @@ export function History() {
                             <HistoryCard
                                 module={item.module}
                                 name={item.name}
-                                time={new Date(item.timestamp).toLocaleTimeString("pt-BR", {
-                                    timeZone: "America/Sao_Paulo",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                })}
+                                timestamp={item.timestamp} // Passando timestamp bruto
                                 humidity={item.humidity}
                             />
                         )}
@@ -104,9 +107,7 @@ export function History() {
                         )}
                         contentContainerStyle={modules.length === 0 && { flex: 1, justifyContent: "center" }}
                         ListEmptyComponent={() => (
-                            <ListEmptyText>
-                                Não há histórico de irrigações.
-                            </ListEmptyText>
+                            <ListEmptyText>Não há histórico de irrigações.</ListEmptyText>
                         )}
                     />
                 )}
